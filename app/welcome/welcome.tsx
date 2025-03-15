@@ -108,8 +108,8 @@ export function Welcome() {
           <TimeCard title="Seconds" value={seconds} theme={theme} />
         </motion.div>
         <div className="flex justify-center items-center">
-          <footer className="mt-8">
-            <p className="text-sm text-gray-500">
+          <footer className="mt-8 p-4 rounded-lg shadow-md">
+            <p className="text-sm text-gray-500 text-center">
               © 2024 - 2025. Created by GerardABC
             </p>
           </footer>

@@ -88,7 +88,7 @@ export default function TimeProgress({
             className="tabular-nums"
           />
         </span>
-        <span className={cn("text-sm", textColor)}>del 2025 completado</span>
+        <span className={cn("text-sm", textColor)}>of 2025 completed</span>
       </motion.div>
     </motion.div>
   );
