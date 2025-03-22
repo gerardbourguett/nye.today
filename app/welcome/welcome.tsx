@@ -4,6 +4,9 @@ import { Button } from "~/components/ui/button";
 import { MoonIcon, SunIcon } from "lucide-react";
 import TimeCard from "~/components/time-card";
 import TimeProgress from "~/components/time-progress";
+import TablaComponent from "~/components/tabla/tabla-component";
+import { CURRENT_YEAR, NEXT_YEAR } from "~/data/constants";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "~/components/ui/tabs";
 export function Welcome() {
   const [timeLeft, setTimeLeft] = useState(0);
   const targetData = new Date("2026-01-01T00:00:00").getTime();
@@ -75,7 +78,8 @@ export function Welcome() {
               theme === "dark" ? "text-white" : "text-slate-900"
             }`}
           >
-            #2026<span className="text-blue-500">Live</span>
+            #{NEXT_YEAR}
+            <span className="text-blue-500">Live</span>
           </h1>
 
           <motion.p
@@ -90,23 +94,34 @@ export function Welcome() {
           </motion.p>
         </motion.div>
 
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 w-full max-w-3xl"
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: { staggerChildren: 0.15 },
-            },
-          }}
-          initial="hidden"
-          animate="show"
-        >
-          <TimeCard title="Days" value={days} theme={theme} />
-          <TimeCard title="Hours" value={hours} theme={theme} />
-          <TimeCard title="Minutes" value={minutes} theme={theme} />
-          <TimeCard title="Seconds" value={seconds} theme={theme} />
-        </motion.div>
+        <Tabs defaultValue="time" className="w-[1000px] max-w-3xl">
+          <TabsList className="mb-4 items-center justify-center">
+            <TabsTrigger value="time">Time</TabsTrigger>
+            <TabsTrigger value="countries">Countries</TabsTrigger>
+          </TabsList>
+          <TabsContent value="time">
+            <motion.div
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 w-full max-w-3xl"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.15 },
+                },
+              }}
+              initial="hidden"
+              animate="show"
+            >
+              <TimeCard title="Days" value={days} theme={theme} />
+              <TimeCard title="Hours" value={hours} theme={theme} />
+              <TimeCard title="Minutes" value={minutes} theme={theme} />
+              <TimeCard title="Seconds" value={seconds} theme={theme} />
+            </motion.div>
+          </TabsContent>
+          <TabsContent value="countries">
+            <TablaComponent />
+          </TabsContent>
+        </Tabs>
         <div className="flex justify-center items-center">
           <footer className="mt-8 p-4 rounded-lg shadow-md">
             <p className="text-sm text-gray-500 text-center">
