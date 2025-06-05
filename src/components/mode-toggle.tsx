@@ -81,7 +81,7 @@ export function ModeToggle() {
                 transition={{ delay: index * 0.05 }}
               >
                 <DropdownMenuItem
-                  onClick={() => setTheme(themeOption.value)}
+                  onClick={() => setTheme(themeOption.value as "system")}
                   className="cursor-pointer flex items-center gap-2 hover:bg-accent/50 transition-colors duration-200"
                 >
                   <motion.div

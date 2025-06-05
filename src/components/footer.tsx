@@ -1,6 +1,5 @@
-import React from "react";
 import { motion } from "motion/react";
-import { Github, Heart, Coffee, Ship } from "lucide-react";
+import { Github, Ship } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FooterProps {
