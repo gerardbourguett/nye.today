@@ -135,7 +135,10 @@ export default function TimeStats({ className }: TimeStatsProps) {
 
   return (
     <motion.div
-      className={cn("w-full max-w-4xl mx-auto", className)}
+      className={cn(
+        "w-full max-w-4xl mx-auto grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+        className
+      )}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.5 }}
@@ -197,10 +200,10 @@ export default function TimeStats({ className }: TimeStatsProps) {
             />
             <span className="text-xs text-gray-500 font-normal">SECS</span>
           </motion.div>
-        </div>
+        </div>{" "}
       </motion.div>{" "}
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
