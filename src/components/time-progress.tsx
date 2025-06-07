@@ -1,7 +1,7 @@
 import {
   useEffect,
   useState,
-  useRef, // Importa useRef
+  useRef, // Import useRef
 } from "react";
 import { cn } from "@/lib/utils";
 import { motion, useSpring } from "motion/react";
@@ -23,9 +23,8 @@ export default function TimeProgress({
   const [progress, setProgress] = useState(0);
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [showProgressPulse, setShowProgressPulse] = useState(false);
-  const springProgress = useSpring(0, { stiffness: 100, damping: 30 });
-  // calculateProgressPercentage se define aquí. Se recreará en cada render
-  // con acceso al estado más reciente.
+  const springProgress = useSpring(0, { stiffness: 100, damping: 30 }); // calculateProgressPercentage is defined here. It will be recreated on each render
+  // with access to the most recent state.
   const calculateProgressPercentage = () => {
     const dateStart = new Date("2025-01-01T00:00:00");
     const dateEnd = new Date("2026-01-01T00:00:00");
@@ -35,16 +34,14 @@ export default function TimeProgress({
     const percentage = Math.max(
       0,
       Math.min(100, (elapsedTime / totalDuration) * 100)
-    );
-
-    // Verificar si ha pasado un minuto desde la última actualización
+    ); // Check if a minute has passed since the last update
     const currentMinute = Math.floor(dateNow.getTime() / (60 * 1000));
     const lastMinute = Math.floor(lastUpdate.getTime() / (60 * 1000));
 
     if (currentMinute > lastMinute) {
       setLastUpdate(dateNow);
       setShowProgressPulse(true);
-      // Quitar el pulso después de 2 segundos
+      // Remove the pulse after 2 seconds
       setTimeout(() => setShowProgressPulse(false), 2000);
     }
 
@@ -52,29 +49,26 @@ export default function TimeProgress({
     springProgress.set(percentage);
     onProgressChange?.(percentage);
   };
-
-  // Crea una referencia para mantener la última versión de calculateProgressPercentage
+  // Create a reference to maintain the latest version of calculateProgressPercentage
   const calculateProgressPercentageRef = useRef(calculateProgressPercentage);
-
-  // Este useEffect se ejecuta después de CADA renderización.
-  // Actualiza la referencia para que siempre apunte a la función más reciente.
+  // This useEffect runs after EVERY render.
+  // Updates the reference so it always points to the most recent function.
   useEffect(() => {
     calculateProgressPercentageRef.current = calculateProgressPercentage;
   });
-
-  // Este useEffect se ejecuta solo una vez (al montar y desmontar).
+  // This useEffect runs only once (on mount and unmount).
   useEffect(() => {
-    // Llamada inicial para calcular el progreso
+    // Initial call to calculate progress
     calculateProgressPercentageRef.current();
 
     const timer = setInterval(() => {
-      // Llama a la función a través de la referencia,
-      // asegurando que sea siempre la versión más reciente.
+      // Calls the function through the reference,
+      // ensuring it's always the most recent version.
       calculateProgressPercentageRef.current();
-    }, 1000); // El intervalo sigue siendo de 1 segundo para actualizar la UI
+    }, 1000); // The interval remains 1 second to update the UI
 
     return () => clearInterval(timer);
-  }, []); // El array de dependencias vacío asegura que se ejecute una vez
+  }, []); // The empty dependency array ensures it runs once
 
   return (
     <motion.div
@@ -102,7 +96,6 @@ export default function TimeProgress({
           <Anchor className={cn("w-4 h-4 text-purple-500")} />
         </div>
       </motion.div>
-
       {/* Enhanced Progress Bar */}
       <div className="w-full max-w-md relative">
         {/* Background with gradient */}
@@ -207,9 +200,8 @@ export default function TimeProgress({
             </motion.div>
           </motion.div>{" "}
         </motion.div>
-      </div>
-
-      {/* Indicador de Progreso Actualizado */}
+      </div>{" "}
+      {/* Updated Progress Indicator */}
       <motion.div
         className={cn(
           "flex items-center gap-3 px-4 py-2 rounded-lg backdrop-blur-sm border transition-all duration-500",
@@ -265,10 +257,10 @@ export default function TimeProgress({
                 className="tabular-nums"
               />
             </motion.span>
-          </div>
+          </div>{" "}
           <span className={cn("text-xs text-gray-500 dark:text-gray-500")}>
             Last updated:{" "}
-            {lastUpdate.toLocaleTimeString("es-ES", {
+            {lastUpdate.toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
               second: "2-digit",
@@ -290,7 +282,6 @@ export default function TimeProgress({
           />
         )}
       </motion.div>
-
       {/* Enhanced Progress Text */}
       <motion.div
         className="flex flex-col items-center gap-3"
@@ -334,7 +325,6 @@ export default function TimeProgress({
           <span>🧭 Course: Steady</span>
         </motion.div>
       </motion.div>
-
       {/* Enhanced Share Buttons */}
       <motion.div
         className="w-full flex justify-center"

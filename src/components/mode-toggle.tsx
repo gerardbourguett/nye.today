@@ -27,10 +27,11 @@ export function ModeToggle() {
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
+          {" "}
           <Button
             variant="outline"
             size="icon"
-            className="relative overflow-hidden bg-background/80 backdrop-blur-sm border-border/50 hover:bg-background/90 transition-all duration-200"
+            className="relative overflow-hidden bg-blue-900/20 backdrop-blur-sm border-blue-400/30 hover:bg-blue-900/40 text-white hover:text-blue-200 transition-all duration-300 shadow-md hover:shadow-lg"
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -65,10 +66,10 @@ export function ModeToggle() {
             />
           </Button>
         </motion.div>
-      </DropdownMenuTrigger>
+      </DropdownMenuTrigger>{" "}
       <DropdownMenuContent
         align="end"
-        className="bg-background/95 backdrop-blur-md border-border/50"
+        className="bg-gradient-to-br from-blue-900/95 to-purple-900/95 backdrop-blur-md border-blue-400/20 shadow-2xl"
       >
         <AnimatePresence>
           {themes.map((themeOption, index) => {
@@ -80,9 +81,10 @@ export function ModeToggle() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
+                {" "}
                 <DropdownMenuItem
                   onClick={() => setTheme(themeOption.value as "system")}
-                  className="cursor-pointer flex items-center gap-2 hover:bg-accent/50 transition-colors duration-200"
+                  className="cursor-pointer flex items-center gap-2 hover:bg-blue-500/20 text-white hover:text-blue-200 transition-all duration-300 rounded-md"
                 >
                   <motion.div
                     whileHover={{ scale: 1.1 }}

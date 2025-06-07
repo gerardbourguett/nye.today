@@ -7,7 +7,7 @@ import CelebrationEffects from "./components/celebration-effects";
 import CursorEffects from "./components/cursor-effects";
 import SpecialDateBanner from "./components/special-date-banner";
 import Footer from "./components/footer";
-import { ModeToggle } from "./components/mode-toggle";
+import Navbar from "./components/navbar";
 
 function App() {
   const [progress, setProgress] = useState(0);
@@ -47,17 +47,7 @@ function App() {
       {/* Celebration effects */}
       <CelebrationEffects progress={progress} />
 
-      {/* Theme toggle button */}
-      <motion.div
-        className="absolute top-6 right-6 z-20"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.5 }}
-      >
-        <ModeToggle />
-      </motion.div>
-
-      <div className="w-full max-w-[95vw] xl:max-w-[90vw] 2xl:max-w-[85vw] mx-auto space-y-12 p-4 relative z-10">
+      <div className="w-full max-w-none mx-auto space-y-8 sm:space-y-10 lg:space-y-12 p-3 sm:p-4 lg:p-6 xl:p-8 relative z-10">
         <motion.header
           className="text-center"
           initial={{ opacity: 0, y: -50 }}
@@ -142,20 +132,20 @@ function App() {
 
         <TimeProgress onProgressChange={setProgress} />
 
-        {/* Layout responsive: una columna en móvil, dos columnas en desktop */}
+        {/* Responsive layout: one column on mobile, two columns on desktop */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-12 items-start">
           <div className="xl:order-1">
             <TimeStats />
           </div>
 
-          {/* Espacio para contenido adicional o información extendida */}
+          {/* Space for additional content or extended information */}
           <motion.div
             className="xl:order-2 space-y-6"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            {/* Panel de información marítima extendida */}
+            {/* Extended maritime information panel */}
             <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-50/80 to-blue-50/80 dark:from-slate-950/80 dark:to-blue-950/80 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/30">
               <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 🧭 Captain's Log
@@ -185,7 +175,7 @@ function App() {
               <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 🗺️ Navigation Chart
               </h3>
-              <div className="relative h-32 bg-gradient-to-r from-blue-200 to-blue-300 dark:from-blue-800 to-blue-700 rounded-lg overflow-hidden">
+              <div className="relative h-32 bg-gradient-to-r from-blue-200 to-blue-300 dark:from-blue-800 dark:to-blue-700 rounded-lg overflow-hidden">
                 {/* Ruta del barco */}
                 <motion.div
                   className="absolute top-1/2 h-1 bg-yellow-400"
@@ -226,7 +216,7 @@ function App() {
               </div>
             </div>
 
-            {/* Estadísticas adicionales */}
+            {/* Additional statistics */}
             <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-50/80 to-pink-50/80 dark:from-purple-950/80 dark:to-pink-950/80 backdrop-blur-sm border border-purple-200/30 dark:border-purple-800/30">
               <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 📊 Voyage Statistics

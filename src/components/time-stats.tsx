@@ -62,16 +62,15 @@ export default function TimeStats({ className }: TimeStatsProps) {
     calculateTimeData();
     const interval = setInterval(calculateTimeData, 1000);
     return () => clearInterval(interval);
-  }, []);
-  // Generar datos aleatorios pero realistas para el barco
+  }, []); // Generate random but realistic ship data
   const generateShipData = () => {
-    const baseSpeed = 8; // nudos base
-    const speedVariation = Math.sin(Date.now() / 10000) * 2; // variación suave
+    const baseSpeed = 8; // base knots
+    const speedVariation = Math.sin(Date.now() / 10000) * 2; // smooth variation
     const currentSpeed = Math.max(6, baseSpeed + speedVariation);
 
-    const windDirection = Math.floor((Date.now() / 5000) % 360); // grados
-    const waveHeight = Math.max(0.5, 2 + Math.sin(Date.now() / 8000) * 1.5); // metros
-    const distanceToPort = Math.max(100, 2500 - timeData.daysPassed * 6.8); // millas náuticas
+    const windDirection = Math.floor((Date.now() / 5000) % 360); // degrees
+    const waveHeight = Math.max(0.5, 2 + Math.sin(Date.now() / 8000) * 1.5); // meters
+    const distanceToPort = Math.max(100, 2500 - timeData.daysPassed * 6.8); // nautical miles
 
     return {
       speed: Math.round(currentSpeed * 10) / 10,
