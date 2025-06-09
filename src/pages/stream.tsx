@@ -1,598 +1,474 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import Flag from "@/components/flag";
-import {
-  Play,
-  Users,
-  Clock,
-  Calendar,
-  ExternalLink,
-  MessageCircle,
-  Star,
+import React, { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Lenis from 'lenis'
+import { 
+  Eye, 
+  Heart, 
+  MessageCircle, 
+  Share2, 
+  Volume2, 
+  VolumeX, 
+  Maximize2,
   Globe,
-  Anchor,
-  Compass,
-  Eye,
-  Volume2,
-  VolumeX,
-  Maximize,
-  Settings,
-  Trophy,
-  MapPin,
-} from "lucide-react";
+  TrendingUp,
+  Timer,
+  Zap,
+  Star
+} from 'lucide-react'
 
-// Interface for previous years' recaps
-interface YearRecap {
-  year: number;
-  title: string;
-  thumbnail: string;
-  duration: string;
-  views: string;
-  highlights: string[];
-  videoUrl: string;
+gsap.registerPlugin(ScrollTrigger)
+
+interface CountryStats {
+  id: string
+  country: string
+  countryCode: string
+  city: string
+  timezone: string
+  timeToMidnight: string
+  hoursToMidnight: number
+  population: number
+  isLive: boolean
+  status: 'celebrating' | 'upcoming' | 'waiting'
+  progress: number
+  viewers: number
+  twitchChannel?: string
 }
 
-// Interface for coverage schedule
-interface CoverageSchedule {
-  country: string;
-  flagCode: string;
-  timezone: string;
-  localTime: string;
-  coverageTime: string;
-  status: "completed" | "live" | "upcoming";
+interface TwitchStream {
+  channel: string
+  title: string
+  viewers: number
+  isLive: boolean
+  category: string
+  language: string
+}
+
+const mockCountryStats: CountryStats[] = [
+  {
+    id: '1',
+    country: 'New Zealand',
+    countryCode: 'nz',
+    city: 'Auckland',
+    timezone: 'NZDT (UTC+13)',
+    timeToMidnight: 'CELEBRATING NOW! 🎉',
+    hoursToMidnight: 0,
+    population: 5000000,
+    isLive: true,
+    status: 'celebrating',
+    progress: 100,
+    viewers: 45230,
+    twitchChannel: 'nz_newyear_official'
+  },
+  {
+    id: '2',
+    country: 'Australia',
+    countryCode: 'au',
+    city: 'Sydney',
+    timezone: 'AEDT (UTC+11)',
+    timeToMidnight: '00:15:32',
+    hoursToMidnight: 0.25,
+    population: 25000000,
+    isLive: true,
+    status: 'celebrating',
+    progress: 95,
+    viewers: 128450,
+    twitchChannel: 'sydney_harbour_live'
+  },
+  {
+    id: '3',
+    country: 'Japan',
+    countryCode: 'jp',
+    city: 'Tokyo',
+    timezone: 'JST (UTC+9)',
+    timeToMidnight: '01:45:12',
+    hoursToMidnight: 1.75,
+    population: 125000000,
+    isLive: true,
+    status: 'upcoming',
+    progress: 85,
+    viewers: 89320,
+    twitchChannel: 'tokyo_countdown_2024'
+  },
+  {
+    id: '4',
+    country: 'United Kingdom',
+    countryCode: 'gb',
+    city: 'London',
+    timezone: 'GMT (UTC+0)',
+    timeToMidnight: '06:30:45',
+    hoursToMidnight: 6.5,
+    population: 67000000,
+    isLive: false,
+    status: 'waiting',
+    progress: 45,
+    viewers: 156780,
+    twitchChannel: 'london_bigben_official'
+  },
+  {
+    id: '5',
+    country: 'United States',
+    countryCode: 'us',
+    city: 'New York',
+    timezone: 'EST (UTC-5)',
+    timeToMidnight: '11:45:20',
+    hoursToMidnight: 11.75,
+    population: 330000000,
+    isLive: false,
+    status: 'waiting',
+    progress: 25,
+    viewers: 234560,
+    twitchChannel: 'timessquare_ballDrop'
+  },
+  {
+    id: '6',
+    country: 'Brazil',
+    countryCode: 'br',
+    city: 'Rio de Janeiro',
+    timezone: 'BRT (UTC-3)',
+    timeToMidnight: '14:20:15',
+    hoursToMidnight: 14.33,
+    population: 215000000,
+    isLive: false,
+    status: 'waiting',
+    progress: 15,
+    viewers: 98760,
+    twitchChannel: 'copacabana_reveillon'
+  }
+]
+
+const vanderfondiStream: TwitchStream = {
+  channel: 'vanderfondi',
+  title: 'New Year Celebrations Around the World! 🌍🎆',
+  viewers: 2500,
+  isLive: true,
+  category: 'Just Chatting',
+  language: 'English'
 }
 
 export default function Stream() {
-  const [isLive, setIsLive] = useState(true);
-  const [viewerCount, setViewerCount] = useState(2847);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  // Official Twitch channel (configurable by admin)
-  const twitchChannel = "vanderfondi"; // Change to real channel
+  const statsRef = useRef<HTMLDivElement>(null)
+  const [selectedCountry, setSelectedCountry] = useState<CountryStats>(mockCountryStats[0]!)
+  const [isMuted, setIsMuted] = useState(true)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const lenisRef = useRef<Lenis | null>(null)
 
-  // Previous years' recaps
-  const yearRecaps: YearRecap[] = [
-    {
-      year: 2025,
-      title: "New Year 2025: The Complete World Journey",
-      thumbnail:
-        "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop",
-      duration: "2:45:30",
-      views: "156K",
-      highlights: [
-        "Spectacular Auckland",
-        "Sydney Harbour Bridge",
-        "Tokyo Sky Tree",
-        "London Big Ben",
-      ],
-      videoUrl: "https://youtube.com/watch?v=ejemplo2025",
-    },
-    {
-      year: 2024,
-      title: "New Year 2024 Special: Around the World",
-      thumbnail:
-        "https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=400&h=300&fit=crop",
-      duration: "3:12:15",
-      views: "234K",
-      highlights: [
-        "Dubai Burj Khalifa",
-        "Paris Eiffel Tower",
-        "New York Times Square",
-        "Rio de Janeiro",
-      ],
-      videoUrl: "https://youtube.com/watch?v=ejemplo2024",
-    },
-    {
-      year: 2023,
-      title: "New Year 2023: Global Celebrations",
-      thumbnail:
-        "https://images.unsplash.com/photo-1482686115713-0fbcaced6e28?w=400&h=300&fit=crop",
-      duration: "2:58:45",
-      views: "189K",
-      highlights: [
-        "Singapore Marina Bay",
-        "Barcelona",
-        "Los Angeles",
-        "Hawaii",
-      ],
-      videoUrl: "https://youtube.com/watch?v=ejemplo2023",
-    },
-  ]; // 2026 Coverage schedule
-  const coverageSchedule: CoverageSchedule[] = [
-    {
-      country: "New Zealand",
-      flagCode: "NZ",
-      timezone: "UTC+13",
-      localTime: "00:00",
-      coverageTime: "11:00 AM",
-      status: "completed",
-    },
-    {
-      country: "Australia",
-      flagCode: "AU",
-      timezone: "UTC+11",
-      localTime: "00:00",
-      coverageTime: "1:00 PM",
-      status: "completed",
-    },
-    {
-      country: "Japan",
-      flagCode: "JP",
-      timezone: "UTC+9",
-      localTime: "00:00",
-      coverageTime: "3:00 PM",
-      status: "completed",
-    },
-    {
-      country: "China",
-      flagCode: "CN",
-      timezone: "UTC+8",
-      localTime: "00:00",
-      coverageTime: "4:00 PM",
-      status: "live",
-    },
-    {
-      country: "Thailand",
-      flagCode: "TH",
-      timezone: "UTC+7",
-      localTime: "00:00",
-      coverageTime: "5:00 PM",
-      status: "upcoming",
-    },
-    {
-      country: "India",
-      flagCode: "IN",
-      timezone: "UTC+5:30",
-      localTime: "00:00",
-      coverageTime: "6:30 PM",
-      status: "upcoming",
-    },
-    {
-      country: "United Arab Emirates",
-      flagCode: "AE",
-      timezone: "UTC+4",
-      localTime: "00:00",
-      coverageTime: "8:00 PM",
-      status: "upcoming",
-    },
-    {
-      country: "Germany",
-      flagCode: "DE",
-      timezone: "UTC+1",
-      localTime: "00:00",
-      coverageTime: "11:00 PM",
-      status: "upcoming",
-    },
-    {
-      country: "United Kingdom",
-      flagCode: "GB",
-      timezone: "UTC+0",
-      localTime: "00:00",
-      coverageTime: "12:00 AM",
-      status: "upcoming",
-    },
-    {
-      country: "Brazil",
-      flagCode: "BR",
-      timezone: "UTC-3",
-      localTime: "00:00",
-      coverageTime: "3:00 AM",
-      status: "upcoming",
-    },
-    {
-      country: "United States (East)",
-      flagCode: "US",
-      timezone: "UTC-5",
-      localTime: "00:00",
-      coverageTime: "5:00 AM",
-      status: "upcoming",
-    },
-    {
-      country: "Mexico",
-      flagCode: "MX",
-      timezone: "UTC-6",
-      localTime: "00:00",
-      coverageTime: "6:00 AM",
-      status: "upcoming",
-    },
-  ];
-  // Update current time every second
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-      // Simulate viewer count changes
-      setViewerCount((prev) => prev + Math.floor(Math.random() * 20 - 10));
-    }, 1000);
+    // Initialize Lenis
+    lenisRef.current = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    })
 
-    return () => clearInterval(timer);
-  }, []);
-
-  const getStatusColor = (status: CoverageSchedule["status"]) => {
-    switch (status) {
-      case "completed":
-        return "text-gray-500";
-      case "live":
-        return "text-red-500";
-      case "upcoming":
-        return "text-blue-500";
-      default:
-        return "text-gray-500";
+    function raf(time: number) {
+      lenisRef.current?.raf(time)
+      requestAnimationFrame(raf)
     }
-  };
+    requestAnimationFrame(raf)
 
-  const getStatusText = (status: CoverageSchedule["status"]) => {
-    switch (status) {
-      case "completed":
-        return "Completed";
-      case "live":
-        return "LIVE";
-      case "upcoming":
-        return "Upcoming";
-      default:
-        return "";
+    // GSAP Animations
+    const tl = gsap.timeline()
+    
+    // Header animation
+    tl.fromTo('.stream-header', 
+      { opacity: 0, y: -50 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+    )
+
+    // Player animation
+    tl.fromTo('.twitch-player', 
+      { opacity: 0, scale: 0.9 },
+      { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" },
+      "-=0.4"
+    )
+
+    // Statistics animation
+    const statCards = statsRef.current?.querySelectorAll('.stat-card')
+    if (statCards) {
+      gsap.fromTo(statCards,
+        { opacity: 0, y: 50, rotationX: -15 },
+        {
+          opacity: 1,
+          y: 0,
+          rotationX: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: statsRef.current,
+            start: "top 80%",
+            end: "bottom 20%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      )
     }
-  };
+
+    // Progress bar animation
+    const progressBars = document.querySelectorAll('.progress-bar')
+    progressBars.forEach((bar, index) => {
+      const progress = mockCountryStats[index]?.progress || 0
+      gsap.to(bar, {
+        width: `${progress}%`,
+        duration: 1.5,
+        ease: "power2.out",
+        delay: index * 0.1,
+        scrollTrigger: {
+          trigger: bar,
+          start: "top 90%",
+          toggleActions: "play none none reverse"
+        }
+      })
+    })
+
+    return () => {
+      lenisRef.current?.destroy()
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+    }
+  }, [])
+
+  const formatViewers = (viewers: number) => {
+    if (viewers >= 1000000) return `${(viewers / 1000000).toFixed(1)}M`
+    if (viewers >= 1000) return `${(viewers / 1000).toFixed(1)}K`
+    return viewers.toString()
+  }
+
+  const formatPopulation = (population: number) => {
+    if (population >= 1000000) return `${(population / 1000000).toFixed(0)}M`
+    if (population >= 1000) return `${(population / 1000).toFixed(0)}K`
+    return population.toString()
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'celebrating': return 'text-green-400 bg-green-500/20'
+      case 'upcoming': return 'text-yellow-400 bg-yellow-500/20'
+      case 'waiting': return 'text-blue-400 bg-blue-500/20'
+      default: return 'text-gray-400 bg-gray-500/20'
+    }
+  }
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'celebrating': return '🎉 Celebrating'
+      case 'upcoming': return '⏰ Next'
+      case 'waiting': return '⏳ Waiting'
+      default: return '❓ Unknown'
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
-      {/* Maritime background effects */}
-      <div className="fixed inset-0 opacity-10">
-        <div className="absolute top-10 left-10 text-6xl animate-bounce">
-          ⚓
-        </div>
-        <div className="absolute top-20 right-20 text-4xl animate-pulse">
-          🧭
-        </div>
-        <div className="absolute bottom-20 left-20 text-5xl animate-pulse">
-          ⛵
-        </div>
-        <div className="absolute bottom-10 right-10 text-3xl animate-bounce">
-          🗺️
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      {/* Header */}
+      <div className="stream-header sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-sky-200/50 dark:border-sky-500/20">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-sky-500 to-slate-500 rounded-xl flex items-center justify-center">
+                <Globe className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Global Stream</h1>
+                <p className="text-sky-600 dark:text-sky-300">Live New Year celebrations</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2 text-sky-600 dark:text-sky-300">
+                <Eye className="w-5 h-5" />
+                <span className="font-semibold">
+                  {formatViewers(mockCountryStats.reduce((acc, country) => acc + country.viewers, 0))} viewers
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
+                <Zap className="w-5 h-5" />
+                <span className="font-semibold">
+                  {mockCountryStats.filter(c => c.isLive).length} live
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-            🏴‍☠️ #BYE2025 🏴‍☠️
-          </h1>
-          <p className="text-xl md:text-2xl text-blue-300 mb-2">
-            Special Coverage: New Year Around the World
-          </p>
-          <div className="flex items-center justify-center gap-4 text-lg">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <span>LIVE</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Eye className="w-5 h-5" />
-              <span>{viewerCount.toLocaleString()} viewers</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <span>{currentTime.toLocaleTimeString()}</span>
-            </div>
-          </div>
-        </motion.div>{" "}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Stream */}
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-black rounded-xl overflow-hidden shadow-2xl"
-            >
-              {/* Twitch Player */}
-              <div className="relative aspect-video">
-                {isLive ? (
-                  <iframe
-                    src={`https://player.twitch.tv/?channel=${twitchChannel}&parent=localhost&autoplay=false&muted=${isMuted}`}
-                    className="w-full h-full"
-                    allowFullScreen
-                    title="Live stream"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                    <div className="text-center">
-                      <Play className="w-16 h-16 mx-auto mb-4 text-blue-400" />
-                      <h3 className="text-xl font-semibold mb-2">
-                        Stream unavailable
-                      </h3>
-                      <p className="text-gray-400">
-                        The stream will start soon
-                      </p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          {/* Main Stream Player */}
+          <div className="xl:col-span-2">
+            <div className="twitch-player bg-white/80 dark:bg-slate-800/50 rounded-2xl overflow-hidden border border-sky-200/50 dark:border-sky-500/20 backdrop-blur-sm">
+              {/* Stream Header */}
+              <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-sky-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">V</span>
+                    </div>
+                    <div>
+                      <h2 className="text-slate-800 dark:text-white font-bold text-lg">
+                        vanderfondi
+                      </h2>
+                      <p className="text-sky-600 dark:text-sky-300 text-sm">{vanderfondiStream.title}</p>
                     </div>
                   </div>
-                )}
-              </div>
-
-              {/* Stream controls */}
-              <div className="bg-slate-900 p-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="p-2 bg-slate-700 rounded-lg hover:bg-slate-600 transition-colors"
-                  >
-                    {isMuted ? (
-                      <VolumeX className="w-5 h-5" />
-                    ) : (
-                      <Volume2 className="w-5 h-5" />
+                  <div className="flex items-center space-x-2">
+                    {vanderfondiStream.isLive && (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                        <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                          LIVE
+                        </span>
+                      </div>
                     )}
-                  </button>
-                  <span className="text-sm text-gray-400">
-                    {isMuted ? "Muted" : "With audio"}
-                  </span>
+                    <div className="bg-black/50 text-white text-sm px-3 py-1 rounded flex items-center space-x-1">
+                      <Eye className="w-4 h-4" />
+                      <span>{formatViewers(vanderfondiStream.viewers)}</span>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                <div className="flex items-center gap-2">
-                  <a
-                    href={`https://twitch.tv/${twitchChannel}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Watch on Twitch
-                  </a>
+              {/* Twitch Embed */}
+              <div className="relative aspect-video bg-gradient-to-br from-slate-100/50 to-sky-100/50 dark:from-slate-800/50 dark:to-slate-700/50">
+                {/* Twitch Iframe Embed */}
+                <iframe
+                  src="https://player.twitch.tv/?channel=vanderfondi&parent=localhost&parent=127.0.0.1&parent=nye.live&autoplay=false&muted=true"
+                  className="w-full h-full border-0"
+                  allowFullScreen
+                  title="vanderfondi Twitch Stream"
+                ></iframe>
+                
+                {/* Overlay Controls */}
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => setIsMuted(!isMuted)}
+                      className="bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors pointer-events-auto"
+                    >
+                      {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                    </button>
+                    <div className="bg-black/50 text-white px-4 py-2 rounded-lg text-sm font-mono">
+                      {selectedCountry.timeToMidnight}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setIsFullscreen(!isFullscreen)}
+                      className="bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition-colors pointer-events-auto"
+                    >
+                      <Maximize2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </motion.div>{" "}
-            {/* Special Information */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mt-6 bg-slate-800/50 backdrop-blur-sm rounded-xl p-6"
-            >
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                <Anchor className="w-6 h-6 text-yellow-400" />
-                New Year 2026 Special
-              </h2>
-              <p className="text-gray-300 mb-4">
-                Join us on an epic journey around the world following the New
-                Year 2026 celebrations. From New Zealand to Mexico, we'll cover
-                live the best fireworks, traditions and unique moments from each
-                country.
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div className="bg-slate-700 rounded-lg p-3">
-                  <Globe className="w-6 h-6 mx-auto mb-2 text-blue-400" />
-                  <div className="text-sm text-gray-400">Countries</div>
-                  <div className="font-bold">12+</div>
-                </div>
-                <div className="bg-slate-700 rounded-lg p-3">
-                  <Clock className="w-6 h-6 mx-auto mb-2 text-green-400" />
-                  <div className="text-sm text-gray-400">Duration</div>
-                  <div className="font-bold">18h</div>
-                </div>
-                <div className="bg-slate-700 rounded-lg p-3">
-                  <Star className="w-6 h-6 mx-auto mb-2 text-yellow-400" />
-                  <div className="text-sm text-gray-400">Specials</div>
-                  <div className="font-bold">25+</div>
-                </div>
-                <div className="bg-slate-700 rounded-lg p-3">
-                  <Users className="w-6 h-6 mx-auto mb-2 text-purple-400" />
-                  <div className="text-sm text-gray-400">Community</div>
-                  <div className="font-bold">Global</div>
+
+              {/* Stream Info */}
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <Heart className="w-5 h-5 text-red-400 hover:text-red-300 cursor-pointer transition-colors" />
+                      <span className="text-slate-800 dark:text-white text-sm">1.2K</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MessageCircle className="w-5 h-5 text-sky-400 hover:text-sky-300 cursor-pointer transition-colors" />
+                      <span className="text-slate-800 dark:text-white text-sm">Chat</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Share2 className="w-5 h-5 text-green-400 hover:text-green-300 cursor-pointer transition-colors" />
+                      <span className="text-slate-800 dark:text-white text-sm">Share</span>
+                    </div>
+                  </div>
+                  <div className="text-sky-600 dark:text-sky-300 text-sm">
+                    Category: {vanderfondiStream.category} • {vanderfondiStream.language}
+                  </div>
                 </div>
               </div>
-            </motion.div>
-          </div>{" "}
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Coverage Schedule */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6"
-            >
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-blue-400" />
-                Coverage Schedule
-              </h3>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {coverageSchedule.map((item, index) => (
+            </div>
+          </div>
+
+          {/* Statistics Sidebar */}
+          <div className="xl:col-span-1">
+            <div className="bg-white/80 dark:bg-slate-800/50 rounded-2xl border border-sky-200/50 dark:border-sky-500/20 overflow-hidden backdrop-blur-sm">
+              <div className="p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div className="flex items-center space-x-3 mb-4">
+                  <TrendingUp className="w-6 h-6 text-sky-600 dark:text-sky-400" />
+                  <h3 className="text-slate-800 dark:text-white font-bold text-xl">Global Statistics</h3>
+                </div>
+                <p className="text-sky-600 dark:text-sky-300 text-sm">
+                  Countries closest to New Year
+                </p>
+              </div>
+
+              <div ref={statsRef} className="p-4 space-y-4 max-h-[600px] overflow-y-auto">
+                {mockCountryStats
+                  .sort((a, b) => a.hoursToMidnight - b.hoursToMidnight)
+                  .map((country, index) => (
                   <div
-                    key={index}
-                    className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                      item.status === "live"
-                        ? "bg-red-500/20 border border-red-500/30"
-                        : "bg-slate-700/50"
+                    key={country.id}
+                    className={`stat-card p-4 rounded-xl border transition-all duration-300 cursor-pointer ${
+                      selectedCountry.id === country.id
+                        ? 'bg-sky-100 dark:bg-sky-600/20 border-sky-400/50'
+                        : 'bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/30 hover:border-sky-400/50 dark:hover:border-sky-500/30'
                     }`}
+                    onClick={() => setSelectedCountry(country)}
                   >
-                    <Flag code={item.flagCode} />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium truncate">{item.country}</div>
-                      <div className="text-sm text-gray-400">
-                        {item.coverageTime}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative">
+                          <img
+                            src={`/src/assets/flags/4x3/${country.countryCode}.svg`}
+                            alt={country.country}
+                            className="w-8 h-6 rounded shadow-lg"
+                          />
+                          {index === 0 && (
+                            <Star className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-current" />
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="text-slate-800 dark:text-white font-semibold text-sm">
+                            {country.city}
+                          </h4>
+                          <p className="text-slate-500 dark:text-slate-400 text-xs">{country.country}</p>
+                        </div>
+                      </div>
+                      <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(country.status)}`}>
+                        {getStatusText(country.status)}
                       </div>
                     </div>
-                    <div
-                      className={`text-xs font-bold ${getStatusColor(
-                        item.status
-                      )}`}
-                    >
-                      {getStatusText(item.status)}
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-300">
+                          <Timer className="w-4 h-4" />
+                          <span>{country.timeToMidnight}</span>
+                        </div>
+                        <div className="flex items-center space-x-1 text-sky-600 dark:text-sky-300">
+                          <Eye className="w-4 h-4" />
+                          <span>{formatViewers(country.viewers)}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span>{country.timezone}</span>
+                        <span>{formatPopulation(country.population)} people</span>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="w-full bg-slate-200/50 dark:bg-slate-600/50 rounded-full h-2 overflow-hidden">
+                        <div 
+                          className="progress-bar h-full bg-gradient-to-r from-sky-500 to-slate-500 rounded-full transition-all duration-300"
+                          style={{ width: '0%' }}
+                        ></div>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </motion.div>{" "}
-            {/* Integrated chat (simulated) */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6"
-            >
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-green-400" />
-                Community Chat
-              </h3>
-              <div className="space-y-2 text-sm h-48 overflow-y-auto">
-                <div className="p-2 bg-slate-700 rounded">
-                  <span className="font-semibold text-blue-400">
-                    Captain_2026:
-                  </span>{" "}
-                  Amazing fireworks in Sydney! 🎆
-                </div>
-                <div className="p-2 bg-slate-700 rounded">
-                  <span className="font-semibold text-green-400">
-                    Global_Sailor:
-                  </span>{" "}
-                  What time do you cover Spain?
-                </div>
-                <div className="p-2 bg-slate-700 rounded">
-                  <span className="font-semibold text-purple-400">
-                    NYE_Explorer:
-                  </span>{" "}
-                  This stream is epic 🔥
-                </div>
-              </div>
-              <div className="mt-4">
-                <a
-                  href={`https://twitch.tv/${twitchChannel}/chat`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  Join Chat
-                </a>
-              </div>
-            </motion.div>
+            </div>
           </div>
-        </div>{" "}
-        {/* Previous Years' Recaps */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mt-12"
-        >
-          <h2 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-3">
-            <Trophy className="w-8 h-8 text-yellow-400" />
-            Previous Years' Recaps
-            <Trophy className="w-8 h-8 text-yellow-400" />
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {yearRecaps.map((recap, index) => (
-              <motion.div
-                key={recap.year}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + index * 0.1 }}
-                className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 cursor-pointer"
-                onClick={() =>
-                  setSelectedYear(
-                    selectedYear === recap.year ? null : recap.year
-                  )
-                }
-              >
-                <div className="relative">
-                  <img
-                    src={recap.thumbnail}
-                    alt={recap.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                    <Play className="w-12 h-12 text-white" />
-                  </div>
-                  <div className="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-sm">
-                    {recap.duration}
-                  </div>
-                  <div className="absolute bottom-2 left-2 bg-red-600 px-2 py-1 rounded text-sm font-bold">
-                    {recap.year}
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">
-                    {recap.title}
-                  </h3>{" "}
-                  <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      {recap.views} views
-                    </span>
-                  </div>
-                  <AnimatePresence>
-                    {selectedYear === recap.year && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="border-t border-slate-600 pt-3"
-                      >
-                        <h4 className="font-semibold text-sm mb-2">
-                          Highlights:
-                        </h4>
-                        <ul className="text-sm text-gray-300 space-y-1 mb-3">
-                          {recap.highlights.map((highlight, i) => (
-                            <li key={i} className="flex items-center gap-2">
-                              <Star className="w-3 h-3 text-yellow-400" />
-                              {highlight}
-                            </li>
-                          ))}
-                        </ul>
-                        <a
-                          href={recap.videoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 w-full py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Play className="w-4 h-4" />
-                          Watch on YouTube
-                        </a>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>{" "}
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="mt-12 text-center bg-gradient-to-r from-blue-800/50 to-purple-800/50 backdrop-blur-sm rounded-xl p-8"
-        >
-          <h2 className="text-2xl font-bold mb-4">Don't miss a moment!</h2>
-          <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-            Follow us on our social networks and activate notifications so you
-            don't miss any New Year celebration around the world.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <a
-              href={`https://twitch.tv/${twitchChannel}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
-            >
-              <ExternalLink className="w-5 h-5" />
-              Follow on Twitch
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-            >
-              <Play className="w-5 h-5" />
-              Subscribe on YouTube
-            </a>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </div>
-  );
+  )
 }

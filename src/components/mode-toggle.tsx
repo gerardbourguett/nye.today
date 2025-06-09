@@ -31,7 +31,7 @@ export function ModeToggle() {
           <Button
             variant="outline"
             size="icon"
-            className="relative overflow-hidden bg-blue-900/20 backdrop-blur-sm border-blue-400/30 hover:bg-blue-900/40 text-white hover:text-blue-200 transition-all duration-300 shadow-md hover:shadow-lg"
+            className="relative overflow-hidden bg-slate-900/20 backdrop-blur-sm border-sky-400/30 hover:bg-slate-900/40 text-white hover:text-sky-200 transition-all duration-300 shadow-md hover:shadow-lg"
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -53,9 +53,9 @@ export function ModeToggle() {
               className="absolute inset-0 rounded-md"
               animate={{
                 background: [
-                  "radial-gradient(circle, rgba(59,130,246,0.1), transparent)",
-                  "radial-gradient(circle, rgba(147,51,234,0.1), transparent)",
-                  "radial-gradient(circle, rgba(59,130,246,0.1), transparent)",
+                  "radial-gradient(circle, rgba(125,211,252,0.1), transparent)",
+                  "radial-gradient(circle, rgba(100,116,139,0.1), transparent)",
+                  "radial-gradient(circle, rgba(125,211,252,0.1), transparent)",
                 ],
               }}
               transition={{
@@ -69,7 +69,7 @@ export function ModeToggle() {
       </DropdownMenuTrigger>{" "}
       <DropdownMenuContent
         align="end"
-        className="bg-gradient-to-br from-blue-900/95 to-purple-900/95 backdrop-blur-md border-blue-400/20 shadow-2xl"
+        className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-md border-sky-400/20 shadow-2xl"
       >
         <AnimatePresence>
           {themes.map((themeOption, index) => {
@@ -84,7 +84,7 @@ export function ModeToggle() {
                 {" "}
                 <DropdownMenuItem
                   onClick={() => setTheme(themeOption.value as "system")}
-                  className="cursor-pointer flex items-center gap-2 hover:bg-blue-500/20 text-white hover:text-blue-200 transition-all duration-300 rounded-md"
+                  className="cursor-pointer flex items-center gap-2 hover:bg-sky-500/20 text-white hover:text-sky-200 transition-all duration-300 rounded-md"
                 >
                   <motion.div
                     whileHover={{ scale: 1.1 }}
@@ -95,7 +95,7 @@ export function ModeToggle() {
                   <span>{themeOption.label}</span>
                   {theme === themeOption.value && (
                     <motion.div
-                      className="ml-auto w-2 h-2 bg-blue-500 rounded-full"
+                      className="ml-auto w-2 h-2 bg-sky-500 rounded-full"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", stiffness: 300 }}

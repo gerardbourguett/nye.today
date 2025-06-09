@@ -88,12 +88,12 @@ export default function TimeProgress({
         transition={{ delay: 0.3 }}
       >
         <div className="flex items-center gap-2">
-          <Anchor className={cn("w-4 h-4 text-blue-500")} />
-          <span className={cn("text-sm font-bold text-blue-500")}>2025</span>
+          <Anchor className={cn("w-4 h-4 text-sky-500")} />
+          <span className={cn("text-sm font-bold text-sky-500")}>2025</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className={cn("text-sm font-bold text-purple-500")}>2026</span>
-          <Anchor className={cn("w-4 h-4 text-purple-500")} />
+          <span className={cn("text-sm font-bold text-slate-500")}>2026</span>
+          <Anchor className={cn("w-4 h-4 text-slate-500")} />
         </div>
       </motion.div>
       {/* Enhanced Progress Bar */}
@@ -103,7 +103,7 @@ export default function TimeProgress({
           className="h-6 w-full rounded-full relative overflow-hidden"
           style={{
             background:
-              "linear-gradient(90deg, rgba(59,130,246,0.2), rgba(147,51,234,0.2))",
+              "linear-gradient(90deg, rgba(125,211,252,0.2), rgba(100,116,139,0.2))",
             boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)",
           }}
         >
@@ -112,9 +112,9 @@ export default function TimeProgress({
             className="absolute inset-0 opacity-30"
             animate={{
               background: [
-                "linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)",
+                "linear-gradient(90deg, transparent, rgba(125,211,252,0.3), transparent)",
                 "linear-gradient(90deg, transparent, rgba(14,165,233,0.3), transparent)",
-                "linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)",
+                "linear-gradient(90deg, transparent, rgba(125,211,252,0.3), transparent)",
               ],
             }}
             transition={{
@@ -129,8 +129,8 @@ export default function TimeProgress({
             className="h-full rounded-full relative overflow-hidden"
             style={{
               width: `${progress}%`,
-              background: "linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6)",
-              boxShadow: "0 0 20px rgba(59,130,246,0.5)",
+              background: "linear-gradient(90deg, #0ea5e9, #7dd3fc, #64748b)",
+              boxShadow: "0 0 20px rgba(14,165,233,0.5)",
             }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
@@ -196,7 +196,7 @@ export default function TimeProgress({
                 ease: "easeInOut",
               }}
             >
-              <Waves className="w-6 h-6 text-blue-400/60" />
+              <Waves className="w-6 h-6 text-sky-400/60" />
             </motion.div>
           </motion.div>{" "}
         </motion.div>
@@ -205,9 +205,9 @@ export default function TimeProgress({
       <motion.div
         className={cn(
           "flex items-center gap-3 px-4 py-2 rounded-lg backdrop-blur-sm border transition-all duration-500",
-          "bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-950/50 dark:to-purple-950/50",
-          "border-blue-200/50 dark:border-blue-800/50",
-          showProgressPulse ? "ring-2 ring-blue-400 shadow-lg scale-105" : ""
+          "bg-gradient-to-r from-sky-50/80 to-slate-50/80 dark:from-slate-950/50 dark:to-slate-800/50",
+          "border-sky-200/50 dark:border-slate-800/50",
+          showProgressPulse ? "ring-2 ring-sky-400 shadow-lg scale-105" : ""
         )}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{
@@ -226,21 +226,21 @@ export default function TimeProgress({
           }}
           transition={{ duration: 1 }}
         >
-          <Clock className={cn("w-4 h-4 text-blue-500")} />
+          <Clock className={cn("w-4 h-4 text-sky-500")} />
         </motion.div>
 
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
             <span
               className={cn(
-                "text-xs font-medium text-gray-600 dark:text-gray-400"
+                "text-xs font-medium text-slate-600 dark:text-slate-400"
               )}
             >
               Current Progress:
             </span>
             <motion.span
               className={cn(
-                "text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text dark:text-white text-transparent"
+                "text-sm font-bold bg-gradient-to-r from-sky-600 to-slate-600 bg-clip-text dark:text-white text-transparent"
               )}
               animate={showProgressPulse ? { scale: [1, 1.1, 1] } : {}}
               transition={{ duration: 0.5 }}
@@ -258,7 +258,7 @@ export default function TimeProgress({
               />
             </motion.span>
           </div>{" "}
-          <span className={cn("text-xs text-gray-500 dark:text-gray-500")}>
+          <span className={cn("text-xs text-slate-500 dark:text-slate-500")}>
             Last updated:{" "}
             {lastUpdate.toLocaleTimeString("en-US", {
               hour: "2-digit",
@@ -290,12 +290,12 @@ export default function TimeProgress({
         transition={{ delay: 0.5, duration: 0.5 }}
       >
         <motion.div
-          className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/50 dark:to-purple-950/50 backdrop-blur-sm border border-blue-200/30 dark:border-blue-800/30"
+          className="text-center p-4 rounded-xl bg-gradient-to-br from-sky-50 to-slate-50 dark:from-slate-950/50 dark:to-slate-800/50 backdrop-blur-sm border border-sky-200/30 dark:border-slate-800/30"
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
           <span
-            className={cn("text-base italic text-gray-700 dark:text-gray-300")}
+            className={cn("text-base italic text-slate-700 dark:text-slate-300")}
           >
             Why is a Spanish Galleon?{" "}
           </span>
@@ -303,7 +303,7 @@ export default function TimeProgress({
           <a
             href="https://www.youtube.com/watch?v=Qk6FEcFKWyw"
             className={cn(
-              "text-base font-bold italic text-gray-700 dark:text-gray-300"
+              "text-base font-bold italic text-slate-700 dark:text-slate-300"
             )}
             target="_blank"
             rel="noopener noreferrer"
@@ -315,7 +315,7 @@ export default function TimeProgress({
 
         {/* Additional stats */}
         <motion.div
-          className="flex gap-4 text-xs text-gray-500 dark:text-gray-400"
+          className="flex gap-4 text-xs text-slate-500 dark:text-slate-400"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}

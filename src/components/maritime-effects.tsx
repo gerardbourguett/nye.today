@@ -64,7 +64,7 @@ export default function MaritimeEffects({ className }: MaritimeEffectsProps) {
       {bubbles.map((bubble) => (
         <motion.div
           key={bubble.id}
-          className="absolute rounded-full bg-blue-400/20 dark:bg-blue-300/10"
+          className="absolute rounded-full bg-sky-400/20 dark:bg-sky-300/10"
           style={{
             left: `${bubble.x}%`,
             top: `${bubble.y}%`,
@@ -123,7 +123,7 @@ export default function MaritimeEffects({ className }: MaritimeEffectsProps) {
           className="absolute bottom-0 left-0 w-[200%] h-full"
           style={{
             background:
-              "linear-gradient(to top, rgba(59, 130, 246, 0.1), transparent)",
+              "linear-gradient(to top, rgba(125, 211, 252, 0.1), transparent)",
           }}
           animate={{
             x: ["-50%", "0%"],
@@ -141,7 +141,7 @@ export default function MaritimeEffects({ className }: MaritimeEffectsProps) {
           >
             <motion.path
               d="M0,50 Q100,20 200,50 T400,50 L400,100 L0,100 Z"
-              fill="rgba(59, 130, 246, 0.1)"
+              fill="rgba(125, 211, 252, 0.1)"
               animate={{
                 d: [
                   "M0,50 Q100,20 200,50 T400,50 L400,100 L0,100 Z",

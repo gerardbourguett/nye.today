@@ -1,688 +1,772 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import Flag from "@/components/flag";
-import {
-  Clock,
-  Globe,
-  Star,
-  MapPin,
-  Calendar,
-  Trophy,
-  Timer,
-  Compass,
-  Anchor,
-  Crown,
-  Award,
-  Users,
-  Eye,
-  Play,
-  ChevronRight,
-  Zap,
-} from "lucide-react";
+import supabase from '@/utils/supabase'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Lenis from 'lenis'
+import { ChevronLeft, ChevronRight, X, Clock, MapPin } from 'lucide-react'
 
-// Interface for countries in the draft
-interface CountryDraft {
-  id: string;
-  position: number; // Position in the draft (1-15+)
-  name: string;
-  flagCode: string; // 2-letter ISO code for flags
-  timezone: string;
-  utcOffset: number;
-  region: string;
-  celebrationTime: string; // Local celebration time
-  utcCelebrationTime: string; // UTC celebration time
-  status: "completed" | "live" | "upcoming" | "draft";
-  timeRemaining?: string;
-  population: number;
-  capitalCity: string;
-  famousLandmark: string;
-  previousRanking?: number; // Previous year ranking
-  isRising: boolean; // If it rose in popularity
-  streamUrl?: string;
-  highlights: string[];
+gsap.registerPlugin(ScrollTrigger)
+
+export interface TimeZoneReduced {
+  id: number
+  countryCode: string
+  countryName: string
+  zoneName: string
+  gmtOffset: number
+  timestamp: number
+}
+
+interface TimeZoneWithCalculations extends TimeZoneReduced {
+  localTime: Date
+  timeToMidnight: string
+  hoursToMidnight: number
+  minutesToMidnight: number
+  progress: number
+  status: 'celebrating' | 'upcoming' | 'waiting'
+}
+
+interface TimeZoneGroup {
+  gmtOffset: number
+  gmtOffsetDisplay: string
+  zoneName: string
+  status: 'celebrating' | 'upcoming' | 'waiting'
+  timeToMidnight: string
+  progress: number
+  countries: TimeZoneWithCalculations[]
+  totalPopulation: number
+  nextMidnight: Date
 }
 
 export default function RoadTo2026() {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedCountry, setSelectedCountry] = useState<CountryDraft | null>(
-    null
-  );
-  const [draftPhase, setDraftPhase] = useState<
-    "upcoming" | "active" | "completed"
-  >("upcoming");
-  const [currentPick, setCurrentPick] = useState(1);
+  const [timezones, setTimezones] = useState<TimeZoneReduced[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedTimeZone, setSelectedTimeZone] = useState<TimeZoneGroup | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const celebratingScrollRef = useRef<HTMLDivElement>(null);
+  const waitingScrollRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  // Example draft data (ordered by UTC timezone)
-  const draftOrder: CountryDraft[] = [
-    {
-      id: "nz",
-      position: 1,
-      name: "New Zealand",
-      flagCode: "NZ",
-      timezone: "NZDT",
-      utcOffset: 13,
-      region: "Oceania",
-      celebrationTime: "00:00 NZDT",
-      utcCelebrationTime: "11:00 UTC (Dec 31)",
-      status: "draft",
-      population: 5000000,
-      capitalCity: "Auckland",
-      famousLandmark: "Sky Tower",
-      previousRanking: 1,
-      isRising: false,
-      highlights: [
-        "First to celebrate",
-        "Iconic Sky Tower",
-        "Spectacular fireworks",
-      ],
-    },
-    {
-      id: "fj",
-      position: 2,
-      name: "Fiji",
-      flagCode: "FJ",
-      timezone: "FJT",
-      utcOffset: 12,
-      region: "Oceania",
-      celebrationTime: "00:00 FJT",
-      utcCelebrationTime: "12:00 UTC (Dec 31)",
-      status: "draft",
-      population: 900000,
-      capitalCity: "Suva",
-      famousLandmark: "Coral Coast",
-      previousRanking: 3,
-      isRising: true,
-      highlights: [
-        "Paradise beach celebration",
-        "Pacific traditions",
-        "Fireworks over coral",
-      ],
-    },
-    {
-      id: "au",
-      position: 3,
-      name: "Australia",
-      flagCode: "AU",
-      timezone: "AEDT",
-      utcOffset: 11,
-      region: "Oceania",
-      celebrationTime: "00:00 AEDT",
-      utcCelebrationTime: "13:00 UTC (Dec 31)",
-      status: "draft",
-      population: 25700000,
-      capitalCity: "Sydney",
-      famousLandmark: "Harbour Bridge",
-      previousRanking: 2,
-      isRising: false,
-      highlights: [
-        "Iconic Harbour Bridge",
-        "Opera House",
-        "Massive celebration",
-      ],
-    },
-    {
-      id: "jp",
-      position: 4,
-      name: "Japan",
-      flagCode: "JP",
-      timezone: "JST",
-      utcOffset: 9,
-      region: "Asia",
-      celebrationTime: "00:00 JST",
-      utcCelebrationTime: "15:00 UTC (Dec 31)",
-      status: "draft",
-      population: 125800000,
-      capitalCity: "Tokyo",
-      famousLandmark: "Tokyo Skytree",
-      previousRanking: 4,
-      isRising: false,
-      highlights: [
-        "Traditional temples",
-        "Tokyo Skytree",
-        "Ancient ceremonies",
-      ],
-    },
-    {
-      id: "cn",
-      position: 5,
-      name: "China",
-      flagCode: "CN",
-      timezone: "CST",
-      utcOffset: 8,
-      region: "Asia",
-      celebrationTime: "00:00 CST",
-      utcCelebrationTime: "16:00 UTC (Dec 31)",
-      status: "draft",
-      population: 1440000000,
-      capitalCity: "Beijing",
-      famousLandmark: "Forbidden City",
-      previousRanking: 5,
-      isRising: false,
-      highlights: [
-        "World's largest population",
-        "Forbidden City",
-        "Millenary traditions",
-      ],
-    },
-    {
-      id: "th",
-      position: 6,
-      name: "Thailand",
-      flagCode: "TH",
-      timezone: "ICT",
-      utcOffset: 7,
-      region: "Asia",
-      celebrationTime: "00:00 ICT",
-      utcCelebrationTime: "17:00 UTC (Dec 31)",
-      status: "draft",
-      population: 69800000,
-      capitalCity: "Bangkok",
-      famousLandmark: "Wat Pho",
-      previousRanking: 8,
-      isRising: true,
-      highlights: ["Golden temples", "Bangkok celebration", "Vibrant culture"],
-    },
-    {
-      id: "in",
-      position: 7,
-      name: "India",
-      flagCode: "IN",
-      timezone: "IST",
-      utcOffset: 5.5,
-      region: "Asia",
-      celebrationTime: "00:00 IST",
-      utcCelebrationTime: "18:30 UTC (Dec 31)",
-      status: "draft",
-      population: 1380000000,
-      capitalCity: "New Delhi",
-      famousLandmark: "Taj Mahal",
-      previousRanking: 6,
-      isRising: false,
-      highlights: [
-        "Second largest population",
-        "Taj Mahal",
-        "Cultural diversity",
-      ],
-    },
-    {
-      id: "ae",
-      position: 8,
-      name: "United Arab Emirates",
-      flagCode: "AE",
-      timezone: "GST",
-      utcOffset: 4,
-      region: "Middle East",
-      celebrationTime: "00:00 GST",
-      utcCelebrationTime: "20:00 UTC (Dec 31)",
-      status: "draft",
-      population: 9900000,
-      capitalCity: "Dubai",
-      famousLandmark: "Burj Khalifa",
-      previousRanking: 7,
-      isRising: false,
-      highlights: ["Burj Khalifa", "Light spectacle", "Luxury and modernity"],
-    },
-    {
-      id: "de",
-      position: 9,
-      name: "Germany",
-      flagCode: "DE",
-      timezone: "CET",
-      utcOffset: 1,
-      region: "Europe",
-      celebrationTime: "00:00 CET",
-      utcCelebrationTime: "23:00 UTC (Dec 31)",
-      status: "draft",
-      population: 83200000,
-      capitalCity: "Berlin",
-      famousLandmark: "Brandenburg Gate",
-      previousRanking: 9,
-      isRising: false,
-      highlights: [
-        "Brandenburg Gate",
-        "European tradition",
-        "History and culture",
-      ],
-    },
-    {
-      id: "gb",
-      position: 10,
-      name: "United Kingdom",
-      flagCode: "GB",
-      timezone: "GMT",
-      utcOffset: 0,
-      region: "Europe",
-      celebrationTime: "00:00 GMT",
-      utcCelebrationTime: "00:00 UTC (Jan 1)",
-      status: "draft",
-      population: 67500000,
-      capitalCity: "London",
-      famousLandmark: "Big Ben",
-      previousRanking: 10,
-      isRising: false,
-      highlights: ["Iconic Big Ben", "London Eye", "British tradition"],
-    },
-    {
-      id: "br",
-      position: 11,
-      name: "Brazil",
-      flagCode: "BR",
-      timezone: "BRT",
-      utcOffset: -3,
-      region: "South America",
-      celebrationTime: "00:00 BRT",
-      utcCelebrationTime: "03:00 UTC (Jan 1)",
-      status: "draft",
-      population: 215300000,
-      capitalCity: "Rio de Janeiro",
-      famousLandmark: "Christ the Redeemer",
-      previousRanking: 11,
-      isRising: false,
-      highlights: ["Copacabana Beach", "Christ the Redeemer", "Carnival vibes"],
-    },
-    {
-      id: "us",
-      position: 12,
-      name: "United States (East)",
-      flagCode: "US",
-      timezone: "EST",
-      utcOffset: -5,
-      region: "North America",
-      celebrationTime: "00:00 EST",
-      utcCelebrationTime: "05:00 UTC (Jan 1)",
-      status: "draft",
-      population: 331900000,
-      capitalCity: "New York",
-      famousLandmark: "Times Square",
-      previousRanking: 12,
-      isRising: false,
-      highlights: [
-        "Times Square Ball Drop",
-        "World icon",
-        "Greatest spectacle",
-      ],
-    },
-    {
-      id: "mx",
-      position: 13,
-      name: "Mexico",
-      flagCode: "MX",
-      timezone: "CST",
-      utcOffset: -6,
-      region: "North America",
-      celebrationTime: "00:00 CST",
-      utcCelebrationTime: "06:00 UTC (Jan 1)",
-      status: "draft",
-      population: 128900000,
-      capitalCity: "Mexico City",
-      famousLandmark: "Zócalo",
-      previousRanking: 13,
-      isRising: false,
-      highlights: ["Historic Zócalo", "Mexican traditions", "Epic finale"],
-    },
-  ];
-  // Update current time
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-  // Simulate draft progress
-  useEffect(() => {
-    const draftTimer = setInterval(() => {
-      if (draftPhase === "active" && currentPick < draftOrder.length) {
-        setCurrentPick((prev) => prev + 1);
+  // Calculate enhanced timezone data and group by timezone
+  const { timeZoneGroups } = useMemo(() => {
+    const now = new Date();
+    const currentUTC = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
+    
+    const enhanced = timezones.map(tz => {
+      const localTime = new Date(currentUTC.getTime() + (tz.gmtOffset * 1000));
+      const localNow = new Date(localTime);
+      const midnight = new Date(localNow);
+      midnight.setDate(midnight.getDate() + 1);
+      midnight.setHours(0, 0, 0, 0);
+      
+      const diffMs = midnight.getTime() - localNow.getTime();
+      const totalMinutesToMidnight = Math.floor(diffMs / (1000 * 60));
+      const hoursToMidnight = Math.floor(totalMinutesToMidnight / 60);
+      const minutesToMidnight = totalMinutesToMidnight % 60;
+      
+      let timeToMidnight: string;
+      let status: 'celebrating' | 'upcoming' | 'waiting';
+      
+      if (hoursToMidnight === 0 && minutesToMidnight <= 5) {
+        timeToMidnight = '🎉 CELEBRATING NOW!';
+        status = 'celebrating';
+      } else if (hoursToMidnight < 1) {
+        timeToMidnight = `${minutesToMidnight}m to midnight`;
+        status = 'upcoming';
+      } else if (hoursToMidnight < 24) {
+        timeToMidnight = `${hoursToMidnight}h ${minutesToMidnight}m`;
+        status = 'upcoming';
+      } else {
+        const days = Math.floor(hoursToMidnight / 24);
+        const remainingHours = hoursToMidnight % 24;
+        timeToMidnight = `${days}d ${remainingHours}h`;
+        status = 'waiting';
       }
-    }, 3000); // Change every 3 seconds for demo
+      
+      const startOfDay = new Date(localNow);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(startOfDay);
+      endOfDay.setDate(endOfDay.getDate() + 1);
+      
+      const dayProgress = (localNow.getTime() - startOfDay.getTime()) / (endOfDay.getTime() - startOfDay.getTime());
+      const progress = Math.max(0, Math.min(100, dayProgress * 100));
 
-    return () => clearInterval(draftTimer);
-  }, [draftPhase, currentPick, draftOrder.length]);
+      return {
+        ...tz,
+        localTime,
+        timeToMidnight,
+        hoursToMidnight,
+        minutesToMidnight: totalMinutesToMidnight,
+        progress,
+        status
+      } as TimeZoneWithCalculations;
+    });
 
-  const getStatusColor = (status: CountryDraft["status"]) => {
-    switch (status) {
-      case "completed":
-        return "text-gray-500";
-      case "live":
-        return "text-red-500";
-      case "upcoming":
-        return "text-blue-500";
-      case "draft":
-        return "text-yellow-500";
-      default:
-        return "text-gray-500";
+    // Group by GMT offset and create timezone groups
+    const groups = new Map<number, TimeZoneGroup>();
+    
+    enhanced.forEach(tz => {
+      const key = tz.gmtOffset;
+      if (!groups.has(key)) {
+        const offsetHours = Math.round(tz.gmtOffset / 3600);
+        const offsetDisplay = offsetHours >= 0 ? `UTC+${offsetHours}` : `UTC${offsetHours}`;
+        
+        groups.set(key, {
+          gmtOffset: tz.gmtOffset,
+          gmtOffsetDisplay: offsetDisplay,
+          zoneName: tz.zoneName.split('/')[0] || tz.zoneName,
+          status: tz.status,
+          timeToMidnight: tz.timeToMidnight,
+          progress: tz.progress,
+          countries: [],
+          totalPopulation: 0,
+          nextMidnight: new Date(tz.localTime.getTime() + (tz.minutesToMidnight * 60 * 1000))
+        });
+      }
+      
+      const group = groups.get(key)!;
+      group.countries.push(tz);
+      
+      // Update group status to the most urgent one
+      if (tz.status === 'celebrating' || 
+          (tz.status === 'upcoming' && group.status === 'waiting')) {
+        group.status = tz.status;
+        group.timeToMidnight = tz.timeToMidnight;
+        group.progress = tz.progress;
+      }
+    });
+
+    // Convert to array and sort by time to midnight
+    const sortedGroups = Array.from(groups.values()).sort((a, b) => {
+      const aMinutes = a.countries[0]?.minutesToMidnight || 0;
+      const bMinutes = b.countries[0]?.minutesToMidnight || 0;
+      return aMinutes - bMinutes;
+    });
+
+    return {
+      timeZoneGroups: sortedGroups
+    };
+  }, [timezones]);
+
+  // Handle modal open/close
+  const openModal = (timeZoneGroup: TimeZoneGroup) => {
+    setSelectedTimeZone(timeZoneGroup);
+    setIsModalOpen(true);
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTimeZone(null);
+    document.body.style.overflow = 'unset'; // Restore scroll
+  };
+
+  // Modal animations
+  useEffect(() => {
+    if (isModalOpen && modalRef.current) {
+      gsap.fromTo(modalRef.current, 
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out" }
+      );
+    }
+  }, [isModalOpen]);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    // Initialize Lenis for smooth scrolling
+    lenisRef.current = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+      lenisRef.current?.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenisRef.current?.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!loading && timeZoneGroups.length > 0) {
+      // GSAP Animations
+      const tl = gsap.timeline();
+
+      // Header animation
+      tl.fromTo('.page-header', 
+        { opacity: 0, y: -50 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+      );
+
+      // Stats animation
+      tl.fromTo('.stats-summary', 
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" },
+        "-=0.4"
+      );
+
+      // Timezone cards animation
+      const timezoneCards = document.querySelectorAll('.timezone-card');
+      if (timezoneCards.length > 0) {
+        gsap.fromTo(timezoneCards,
+          { opacity: 0, x: 100, rotationY: -15 },
+          {
+            opacity: 1,
+            x: 0,
+            rotationY: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: '.timezone-groups-container',
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+
+      // Progress bars animation
+      const progressBars = document.querySelectorAll('.progress-bar');
+      progressBars.forEach((bar, index) => {
+        const progress = timeZoneGroups[index]?.progress || 0;
+        gsap.to(bar, {
+          width: `${progress}%`,
+          duration: 1.5,
+          ease: "power2.out",
+          delay: index * 0.05,
+          scrollTrigger: {
+            trigger: bar,
+            start: "top 90%",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+
+      // Floating elements animation
+      gsap.to('.floating-element', {
+        y: "-=20",
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "power2.inOut",
+        stagger: 0.5
+      });
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, [loading, timeZoneGroups]);
+
+  useEffect(() => {
+    async function getTimeZoneReduced() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const { data: timezones, error: supabaseError } = await supabase
+          .from('time_zone_reduced')
+          .select('*');
+        
+        if (supabaseError) {
+          console.error('Supabase error:', supabaseError);
+          setError(supabaseError.message);
+          return;
+        }
+        
+        if (timezones) {
+          setTimezones(timezones as TimeZoneReduced[]);
+          console.log('Successfully loaded timezones:', timezones.length);
+        }
+      } catch (err) {
+        console.error('Error fetching timezones:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getTimeZoneReduced();
+    
+    // Update every minute to keep times accurate
+    const interval = setInterval(getTimeZoneReduced, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const scrollContainer = (direction: 'left' | 'right', containerRef: React.RefObject<HTMLDivElement | null>) => {
+    if (containerRef.current) {
+      const scrollAmount = 400;
+      const newScrollLeft = direction === 'left' 
+        ? containerRef.current.scrollLeft - scrollAmount
+        : containerRef.current.scrollLeft + scrollAmount;
+      
+      gsap.to(containerRef.current, {
+        scrollLeft: newScrollLeft,
+        duration: 0.5,
+        ease: "power2.out"
+      });
     }
   };
 
-  const getPositionColor = (position: number) => {
-    if (position <= 3) return "from-yellow-400 to-orange-500"; // Top 3
-    if (position <= 6) return "from-blue-400 to-purple-500"; // Top 6
-    if (position <= 9) return "from-green-400 to-teal-500"; // Top 9
-    return "from-gray-400 to-slate-500"; // Rest
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'celebrating': return 'text-green-400 bg-green-500/20 border-green-500/30 dark:text-green-400 dark:bg-green-500/20 dark:border-green-500/30';
+      case 'upcoming': return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30 dark:text-yellow-400 dark:bg-yellow-500/20 dark:border-yellow-500/30';
+      case 'waiting': return 'text-sky-400 bg-sky-500/20 border-sky-500/30 dark:text-sky-400 dark:bg-sky-500/20 dark:border-sky-500/30';
+      default: return 'text-slate-400 bg-slate-500/20 border-slate-500/30 dark:text-slate-400 dark:bg-slate-500/20 dark:border-slate-500/30';
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
-      {/* Maritime background effects */}
-      <div className="fixed inset-0 opacity-10">
-        <div className="absolute top-10 left-10 text-6xl animate-bounce">
-          ⚓
-        </div>
-        <div className="absolute top-20 right-20 text-4xl animate-pulse">
-          🧭
-        </div>
-        <div className="absolute bottom-20 left-20 text-5xl animate-pulse">
-          ⛵
-        </div>
-        <div className="absolute bottom-10 right-10 text-3xl animate-bounce">
-          🗺️
+  const formatLocalTime = (localTime: Date) => {
+    return localTime.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'UTC'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-800 dark:text-white text-lg">Loading timezones...</p>
         </div>
       </div>
+    );
+  }
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        {/* Draft Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-            🏴‍☠️ ROAD TO 2026 🏴‍☠️
-          </h1>{" "}
-          <p className="text-xl md:text-2xl text-blue-300 mb-4">
-            Official Draft: New Year's Celebration Order
-          </p>{" "}
-          {/* Draft Statistics */}
-          <div className="flex items-center justify-center gap-6 text-lg mb-6">
-            <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-yellow-400" />
-              <span>13 Countries</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Globe className="w-5 h-5 text-blue-400" />
-              <span>18 Hours of Coverage</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-green-400" />
-              <span>4.8B+ Viewers</span>
-            </div>
-          </div>
-          {/* Draft Status */}
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 max-w-md mx-auto">
-            {" "}
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Timer className="w-5 h-5 text-yellow-400" />
-              <span className="font-semibold">Draft Status</span>
-            </div>
-            <div className="text-2xl font-bold text-yellow-400">
-              {draftPhase === "upcoming" && "Upcoming"}
-              {draftPhase === "active" && `Pick #${currentPick} - LIVE`}
-              {draftPhase === "completed" && "Completed"}
-            </div>
-            <div className="text-sm text-gray-400 mt-1">
-              {currentTime.toLocaleString()}
-            </div>
-          </div>
-        </motion.div>{" "}
-        {/* Draft Controls */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-center gap-4 mb-8"
-        >
-          <button
-            onClick={() => setDraftPhase("upcoming")}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              draftPhase === "upcoming"
-                ? "bg-blue-600 text-white"
-                : "bg-slate-700 text-gray-300 hover:bg-slate-600"
-            }`}
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center bg-red-500/10 border border-red-500/20 rounded-xl p-8 max-w-md">
+          <h2 className="text-red-600 dark:text-red-400 text-xl font-bold mb-4">Connection Error</h2>
+          <p className="text-red-500 dark:text-red-300 mb-4">{error}</p>
+          <p className="text-slate-600 dark:text-slate-400 text-sm">
+            Please check your Supabase configuration and internet connection.
+          </p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
-            Upcoming
+            Retry
           </button>
-          <button
-            onClick={() => setDraftPhase("active")}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              draftPhase === "active"
-                ? "bg-red-600 text-white"
-                : "bg-slate-700 text-gray-300 hover:bg-slate-600"
-            }`}
-          >
-            Live
-          </button>
-          <button
-            onClick={() => setDraftPhase("completed")}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              draftPhase === "completed"
-                ? "bg-green-600 text-white"
-                : "bg-slate-700 text-gray-300 hover:bg-slate-600"
-            }`}
-          >
-            Completed
-          </button>
-        </motion.div>
-        {/* Draft List */}
-        <div className="grid gap-4 max-w-4xl mx-auto">
-          {draftOrder.map((country, index) => {
-            const isCurrentPick =
-              draftPhase === "active" && country.position === currentPick;
-            const isPicked =
-              draftPhase === "active" && country.position < currentPick;
-            const isUpcoming =
-              draftPhase === "active" && country.position > currentPick;
+        </div>
+      </div>
+    );
+  }
 
-            return (
-              <motion.div
-                key={country.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative group cursor-pointer transition-all duration-300 ${
-                  isCurrentPick
-                    ? "transform scale-105 z-10"
-                    : isPicked
-                    ? "opacity-60"
-                    : ""
-                }`}
-                onClick={() =>
-                  setSelectedCountry(
-                    selectedCountry?.id === country.id ? null : country
-                  )
-                }
-              >
-                {/* Current pick indicator */}
-                {isCurrentPick && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-2 -left-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center z-20"
+  const celebratingAndUpcoming = timeZoneGroups.filter(group => 
+    group.status === 'celebrating' || group.status === 'upcoming'
+  );
+  
+  const waitingGroups = timeZoneGroups.filter(group => 
+    group.status === 'waiting'
+  );
+
+  return (
+    <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-8">
+      {/* Floating background elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className={`floating-element absolute w-2 h-2 bg-sky-400/20 dark:bg-sky-400/30 rounded-full`}
+            style={{
+              left: `${15 + i * 15}%`,
+              top: `${20 + (i % 3) * 25}%`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="container mx-auto relative z-10">
+        <div className="page-header text-center mb-8">
+          <h1 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">Road To 2026</h1>
+          <p className="text-sky-600 dark:text-sky-300">Time zones ordered by proximity to New Year midnight</p>
+          <div className="stats-summary mt-4 inline-flex items-center gap-6 px-6 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full border border-sky-200/50 dark:border-sky-500/20">
+            <span className="text-green-600 dark:text-green-400 font-semibold">
+              {celebratingAndUpcoming.filter(g => g.status === 'celebrating').length} celebrating
+            </span>
+            <span className="text-yellow-600 dark:text-yellow-400 font-semibold">
+              {celebratingAndUpcoming.filter(g => g.status === 'upcoming').length} upcoming
+            </span>
+            <span className="text-sky-600 dark:text-sky-400 font-semibold">
+              {waitingGroups.length} waiting
+            </span>
+          </div>
+        </div>
+
+        <div className="timezone-groups-container space-y-12">
+          {/* Celebrating & Upcoming Time Zones */}
+          {celebratingAndUpcoming.length > 0 && (
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">🎉 Celebrating & Upcoming</h2>
+                  <p className="text-sky-600 dark:text-sky-300 text-sm">Time zones celebrating now or within 24 hours</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => scrollContainer('left', celebratingScrollRef)}
+                    className="p-2 rounded-full bg-white/80 dark:bg-slate-800/80 border border-sky-200/50 dark:border-sky-500/20 hover:border-sky-400/60 dark:hover:border-sky-400/50 transition-colors"
                   >
-                    <Zap className="w-4 h-4 text-white" />
-                  </motion.div>
-                )}
-
-                <div
-                  className={`
-                  bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border-2 transition-all duration-300
-                  ${
-                    isCurrentPick
-                      ? "border-red-500 shadow-lg shadow-red-500/25"
-                      : isPicked
-                      ? "border-green-500/50"
-                      : isUpcoming
-                      ? "border-gray-600"
-                      : "border-slate-600 hover:border-blue-500"
-                  }
-                `}
-                >
-                  {" "}
-                  <div className="flex items-center gap-4">
-                    {/* Draft Position */}
-                    <div
-                      className={`
-                      w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold
-                      bg-gradient-to-br ${getPositionColor(country.position)}
-                    `}
-                    >
-                      {country.position}
-                    </div>{" "}
-                    {/* Flag and name */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        {" "}
-                        <Flag
-                          code={country.flagCode}
-                          size="l"
-                          className="rounded shadow-lg"
-                        />
-                        <div>
-                          <h3 className="text-xl font-bold">{country.name}</h3>
-                          <p className="text-gray-400">
-                            {country.capitalCity} • {country.region}
-                          </p>
-                        </div>
-                        {country.isRising && (
-                          <div className="flex items-center gap-1 text-green-400">
-                            <ChevronRight className="w-4 h-4 rotate-[-90deg]" />
-                            <span className="text-xs font-semibold">
-                              RISING
-                            </span>
+                    <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                  </button>
+                  <button
+                    onClick={() => scrollContainer('right', celebratingScrollRef)}
+                    className="p-2 rounded-full bg-white/80 dark:bg-slate-800/80 border border-sky-200/50 dark:border-sky-500/20 hover:border-sky-400/60 dark:hover:border-sky-400/50 transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                  </button>
+                </div>
+              </div>
+              
+              <div 
+                ref={celebratingScrollRef}
+                className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide"
+                style={{ scrollBehavior: 'smooth' }}
+              >
+                {celebratingAndUpcoming.map((group, index) => (
+                  <div 
+                    key={`${group.gmtOffset}-celebrating`}
+                    className="timezone-card flex-shrink-0 w-80 bg-gradient-to-r from-white/90 to-sky-50/90 dark:from-slate-800/70 dark:to-slate-700/70 rounded-2xl p-6 border border-sky-200/50 dark:border-sky-500/30 hover:border-sky-400/60 dark:hover:border-sky-400/50 transition-all duration-300 backdrop-blur-sm cursor-pointer hover:scale-105"
+                    onClick={() => openModal(group)}
+                  >
+                    {/* Glow effect for celebrating zones */}
+                    {group.status === 'celebrating' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-2xl"></div>
+                    )}
+                    
+                    <div className="relative z-10">
+                      {/* Timezone Header */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                            group.status === 'celebrating' 
+                              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                              : 'bg-gradient-to-r from-sky-500 to-sky-600 text-white'
+                          }`}>
+                            #{index + 1}
                           </div>
-                        )}
-                      </div>{" "}
-                    </div>
-                    {/* Time information */}
-                    <div className="text-right">
-                      <div className="text-lg font-semibold">
-                        {country.celebrationTime}
+                          <div>
+                            <h3 className="text-slate-800 dark:text-white font-bold text-xl">{group.gmtOffsetDisplay}</h3>
+                            <p className="text-sky-600 dark:text-sky-300 text-sm">{group.zoneName}</p>
+                          </div>
+                        </div>
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(group.status)}`}>
+                          {group.status === 'celebrating' && '🎉 Celebrating'}
+                          {group.status === 'upcoming' && '⏰ Upcoming'}
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-400">
-                        {country.utcCelebrationTime}
+
+                      {/* Time Info */}
+                      <div className="mb-4">
+                        <div className="text-center">
+                          <div className={`font-bold text-lg ${
+                            group.status === 'celebrating' ? 'text-green-600 dark:text-green-400' : 'text-sky-600 dark:text-sky-400'
+                          }`}>
+                            {group.timeToMidnight}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs text-blue-400">
-                        {country.timezone}
-                      </div>{" "}
-                    </div>
-                    {/* Status */}
-                    <div className="flex flex-col items-center gap-2">
-                      {isPicked && <Award className="w-6 h-6 text-green-400" />}
-                      {isCurrentPick && (
-                        <Star className="w-6 h-6 text-red-400 animate-pulse" />
-                      )}
-                      {isUpcoming && (
-                        <Clock className="w-6 h-6 text-gray-400" />
-                      )}
+
+                      {/* Progress Bar */}
+                      <div className="mb-4">
+                        <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+                          <span>Progress to midnight</span>
+                          <span>{Math.round(group.progress)}%</span>
+                        </div>
+                        <div className="w-full bg-slate-200/50 dark:bg-slate-600/50 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`progress-bar h-full rounded-full transition-all duration-1000 ${
+                              group.status === 'celebrating' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                              'bg-gradient-to-r from-sky-500 to-sky-600'
+                            }`}
+                            style={{ width: '0%' }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {/* Countries in this timezone */}
+                      <div className="space-y-2">
+                        <h4 className="text-slate-700 dark:text-slate-300 font-medium text-sm">Countries in this timezone:</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {group.countries.slice(0, 4).map((country) => (
+                            <div key={country.id} className="flex items-center space-x-2 text-sm">
+                              <img
+                                src={`/src/assets/flags/4x3/${country.countryCode.toLowerCase()}.svg`}
+                                alt={country.countryName}
+                                className="w-4 h-3 rounded shadow-sm"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                              <span className="text-slate-600 dark:text-slate-400 text-xs truncate">
+                                {country.countryName}
+                              </span>
+                            </div>
+                          ))}
+                          {group.countries.length > 4 && (
+                            <div className="text-xs text-slate-500 dark:text-slate-500 col-span-2 flex items-center space-x-1">
+                              <MapPin className="w-3 h-3" />
+                              <span>+{group.countries.length - 4} more (click to see all)</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  {/* Expandable details */}
-                  <AnimatePresence>
-                    {selectedCountry?.id === country.id && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="mt-4 pt-4 border-t border-slate-600"
-                      >
-                        {" "}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {/* Statistics */}
-                          <div>
-                            <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Users className="w-4 h-4" />
-                              Statistics
-                            </h4>
-                            <div className="space-y-1 text-sm">
-                              <div>
-                                Population:{" "}
-                                {country.population.toLocaleString()}
-                              </div>
-                              <div>
-                                2025 Ranking: #{country.previousRanking}
-                              </div>
-                              <div>
-                                UTC Offset: {country.utcOffset > 0 ? "+" : ""}
-                                {country.utcOffset}
-                              </div>
-                            </div>
-                          </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-                          {/* Landmark */}
-                          <div>
-                            {" "}
-                            <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              Main Icon
-                            </h4>
-                            <div className="text-sm text-blue-400">
-                              {country.famousLandmark}
-                            </div>
-                          </div>
-
-                          {/* Highlights */}
-                          <div>
-                            <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Star className="w-4 h-4" />
-                              Highlights
-                            </h4>
-                            <ul className="text-sm space-y-1">
-                              {country.highlights.map((highlight, i) => (
-                                <li key={i} className="text-gray-300">
-                                  • {highlight}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>{" "}
-                        {/* Action button */}
-                        <div className="mt-4 flex justify-end">
-                          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-                            <Play className="w-4 h-4" />
-                            Watch Stream
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+          {/* Waiting Time Zones */}
+          {waitingGroups.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-2">⏳ Waiting Time Zones</h2>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">Time zones waiting more than 24 hours</p>
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>{" "}
-        {/* Additional information */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="mt-12 text-center bg-gradient-to-r from-blue-800/50 to-purple-800/50 backdrop-blur-sm rounded-xl p-8"
-        >
-          <h2 className="text-2xl font-bold mb-4">How does the Draft work?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-            <div className="text-center">
-              <Globe className="w-8 h-8 mx-auto mb-2 text-blue-400" />
-              <h3 className="font-semibold mb-2">Order by Time Zone</h3>
-              <p className="text-sm text-gray-300">
-                Countries are ordered by their celebration time, from UTC+13 to
-                UTC-6
-              </p>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => scrollContainer('left', waitingScrollRef)}
+                    className="p-2 rounded-full bg-white/80 dark:bg-slate-800/80 border border-sky-200/50 dark:border-sky-500/20 hover:border-sky-400/60 dark:hover:border-sky-400/50 transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                  </button>
+                  <button
+                    onClick={() => scrollContainer('right', waitingScrollRef)}
+                    className="p-2 rounded-full bg-white/80 dark:bg-slate-800/80 border border-sky-200/50 dark:border-sky-500/20 hover:border-sky-400/60 dark:hover:border-sky-400/50 transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                  </button>
+                </div>
+              </div>
+              
+              <div 
+                ref={waitingScrollRef}
+                className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
+                style={{ scrollBehavior: 'smooth' }}
+              >
+                {waitingGroups.map((group) => (
+                  <div 
+                    key={`${group.gmtOffset}-waiting`}
+                    className="timezone-card flex-shrink-0 w-64 bg-white/80 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-600/30 hover:border-sky-400/50 dark:hover:border-sky-500/30 transition-all duration-300 backdrop-blur-sm cursor-pointer hover:scale-105"
+                    onClick={() => openModal(group)}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="text-slate-800 dark:text-white font-semibold text-lg">{group.gmtOffsetDisplay}</h3>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">{group.zoneName}</p>
+                      </div>
+                      <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(group.status)}`}>
+                        ⏳ Waiting
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 text-sm">
+                      <div className="text-center">
+                        <div className="text-sky-600 dark:text-sky-400 font-medium">
+                          {group.timeToMidnight}
+                        </div>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+                          <span>Progress</span>
+                          <span>{Math.round(group.progress)}%</span>
+                        </div>
+                        <div className="w-full bg-slate-200/50 dark:bg-slate-600/50 rounded-full h-2 overflow-hidden">
+                          <div 
+                            className="progress-bar h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-sky-500 to-slate-500"
+                            style={{ width: '0%' }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {/* Countries sample */}
+                      <div className="space-y-1">
+                        {group.countries.slice(0, 3).map((country) => (
+                          <div key={country.id} className="flex items-center space-x-2">
+                            <img
+                              src={`/src/assets/flags/4x3/${country.countryCode.toLowerCase()}.svg`}
+                              alt={country.countryName}
+                              className="w-3 h-2 rounded shadow-sm"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
+                            <span className="text-slate-600 dark:text-slate-400 text-xs truncate">
+                              {country.countryName}
+                            </span>
+                          </div>
+                        ))}
+                        {group.countries.length > 3 && (
+                          <div className="text-xs text-slate-500 dark:text-slate-500 flex items-center space-x-1">
+                            <MapPin className="w-3 h-3" />
+                            <span>+{group.countries.length - 3} more (click to see all)</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="text-center">
-              <Eye className="w-8 h-8 mx-auto mb-2 text-green-400" />
-              <h3 className="font-semibold mb-2">Live Coverage</h3>
-              <p className="text-sm text-gray-300">
-                Real-time tracking of each celebration with official streams
-              </p>
+          )}
+        </div>
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && selectedTimeZone && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div 
+            ref={modalRef}
+            className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden border border-sky-200/50 dark:border-sky-500/20"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-200/50 dark:border-slate-600/50">
+              <div className="flex items-center space-x-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                  selectedTimeZone.status === 'celebrating' 
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                    : selectedTimeZone.status === 'upcoming'
+                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white'
+                    : 'bg-gradient-to-r from-sky-500 to-sky-600 text-white'
+                }`}>
+                  <Clock className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{selectedTimeZone.gmtOffsetDisplay}</h2>
+                  <p className="text-sky-600 dark:text-sky-300">{selectedTimeZone.zoneName} • {selectedTimeZone.timeToMidnight}</p>
+                </div>
+              </div>
+              <button
+                onClick={closeModal}
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+              >
+                <X className="w-6 h-6 text-slate-600 dark:text-slate-300" />
+              </button>
             </div>
-            <div className="text-center">
-              <Trophy className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
-              <h3 className="font-semibold mb-2">Official Rankings</h3>
-              <p className="text-sm text-gray-300">
-                Based on popularity, spectacle and tradition of each celebration
-              </p>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="mb-4">
+                <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(selectedTimeZone.status)}`}>
+                  {selectedTimeZone.status === 'celebrating' && '🎉 Celebrating Now'}
+                  {selectedTimeZone.status === 'upcoming' && '⏰ Upcoming'}
+                  {selectedTimeZone.status === 'waiting' && '⏳ Waiting'}
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
+                Countries and territories in this time zone ({selectedTimeZone.countries.length} total):
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {selectedTimeZone.countries.map((country) => (
+                  <div 
+                    key={country.id}
+                    className="bg-white/50 dark:bg-slate-700/50 rounded-lg p-4 border border-slate-200/50 dark:border-slate-600/30 hover:border-sky-400/50 dark:hover:border-sky-500/30 transition-colors"
+                  >
+                    <div className="flex items-center space-x-3 mb-3">
+                      <img
+                        src={`/src/assets/flags/4x3/${country.countryCode.toLowerCase()}.svg`}
+                        alt={country.countryName}
+                        className="w-8 h-6 rounded shadow-md"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div>
+                        <h4 className="font-semibold text-slate-800 dark:text-white">{country.countryName}</h4>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{country.zoneName}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-slate-500 dark:text-slate-400">Local time:</span>
+                        <span className="text-sky-600 dark:text-sky-400 font-mono">
+                          {formatLocalTime(country.localTime)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500 dark:text-slate-400">To midnight:</span>
+                        <span className="text-sky-600 dark:text-sky-400 font-medium">
+                          {country.timeToMidnight}
+                        </span>
+                      </div>
+                      
+                      {/* Individual progress bar */}
+                      <div className="mt-2">
+                        <div className="w-full bg-slate-200/50 dark:bg-slate-600/50 rounded-full h-1.5">
+                          <div 
+                            className={`h-full rounded-full ${
+                              country.status === 'celebrating' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                              country.status === 'upcoming' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                              'bg-gradient-to-r from-sky-500 to-slate-500'
+                            }`}
+                            style={{ width: `${country.progress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-200/50 dark:border-slate-600/50 bg-slate-50/50 dark:bg-slate-700/50">
+              <div className="text-center text-sm text-slate-500 dark:text-slate-400">
+                Click anywhere outside this modal or press <kbd className="px-2 py-1 bg-slate-200 dark:bg-slate-600 rounded">Esc</kbd> to close
+              </div>
             </div>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      )}
+
+      <style>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }

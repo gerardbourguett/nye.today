@@ -20,7 +20,7 @@ export default function Footer({ className }: FooterProps) {
       transition={{ duration: 0.8, delay: 1.5 }}
     >
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-blue-50/50 to-transparent dark:from-blue-950/20 dark:to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-sky-50/50 to-transparent dark:from-slate-950/20 dark:to-transparent" />
 
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Decorative wave */}
@@ -36,7 +36,7 @@ export default function Footer({ className }: FooterProps) {
           }}
         >
           <svg
-            className="w-full h-8 text-blue-300/50 dark:text-blue-600/30"
+            className="w-full h-8 text-sky-300/50 dark:text-sky-600/30"
             viewBox="0 0 400 40"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -64,13 +64,13 @@ export default function Footer({ className }: FooterProps) {
         <div className="text-center space-y-6">
           {/* Main footer content */}
           <motion.div
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-400"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-slate-600 dark:text-slate-400"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.7 }}
           >
             <div className="flex items-center gap-2">
-              <Ship className="w-4 h-4 text-blue-500" />
+              <Ship className="w-4 h-4 text-sky-500" />
               <span>Sailing through {currentYear + 1}</span>
             </div>
             <span className="hidden sm:inline">•</span>
@@ -91,7 +91,7 @@ export default function Footer({ className }: FooterProps) {
               href="https://github.com/gerardbourguett/nye.today"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
+              className="flex items-center gap-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors duration-200"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -102,13 +102,13 @@ export default function Footer({ className }: FooterProps) {
 
           {/* Inspirational quote */}
           <motion.div
-            className="pt-4 border-t border-gray-200/50 dark:border-gray-700/50"
+            className="pt-4 border-t border-slate-200/50 dark:border-slate-700/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2.1 }}
           >
             <motion.p
-              className="text-xs italic text-gray-500 dark:text-gray-400 max-w-md mx-auto"
+              className="text-xs italic text-slate-500 dark:text-slate-400 max-w-md mx-auto"
               animate={{
                 opacity: [0.7, 1, 0.7],
               }}
@@ -127,7 +127,7 @@ export default function Footer({ className }: FooterProps) {
                 rel="noopener noreferrer"
                 className="mt-2 block"
               >
-                <span className="text-blue-500 dark:text-blue-400 font-medium">
+                <span className="text-sky-500 dark:text-sky-400 font-medium">
                   — Tommy Rey
                 </span>
               </a>
@@ -139,7 +139,7 @@ export default function Footer({ className }: FooterProps) {
             {[...Array(3)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
+                className="absolute w-1 h-1 bg-sky-400/30 rounded-full"
                 style={{
                   left: `${20 + i * 30}%`,
                   top: `${20 + i * 15}%`,

@@ -144,11 +144,11 @@ export default function TimeStats({ className }: TimeStatsProps) {
     >
       {/* Countdown Display */}
       <motion.div
-        className="mb-8 text-center p-6 rounded-2xl bg-gradient-to-br from-slate-50/80 to-blue-50/80 dark:from-slate-950/80 dark:to-blue-950/80 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/30"
+        className="mb-8 text-center p-6 rounded-2xl bg-gradient-to-br from-slate-50/80 to-sky-50/80 dark:from-slate-950/80 dark:to-slate-800/80 backdrop-blur-sm border border-slate-200/30 dark:border-slate-800/30"
         whileHover={{ scale: 1.02 }}
         transition={{ type: "spring", stiffness: 300 }}
       >
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">
+        <h3 className="text-lg font-semibold mb-4 text-slate-700 dark:text-slate-300">
           ⏰ Time Until We Reach Port 2026
         </h3>
         <div className="flex justify-center items-center gap-4 text-2xl sm:text-3xl font-bold">
@@ -159,11 +159,11 @@ export default function TimeStats({ className }: TimeStatsProps) {
           >
             <NumberFlow
               value={timeData.daysRemaining}
-              className="text-blue-600 dark:text-blue-400 tabular-nums"
+              className="text-sky-600 dark:text-sky-400 tabular-nums"
             />
-            <span className="text-xs text-gray-500 font-normal">DAYS</span>
+            <span className="text-xs text-slate-500 font-normal">DAYS</span>
           </motion.div>
-          <span className="text-gray-400">:</span>
+          <span className="text-slate-400">:</span>
           <motion.div
             className="flex flex-col items-center"
             animate={{ scale: [1, 1.05, 1] }}
@@ -171,11 +171,11 @@ export default function TimeStats({ className }: TimeStatsProps) {
           >
             <NumberFlow
               value={timeData.hoursRemaining}
-              className="text-purple-600 dark:text-purple-400 tabular-nums"
+              className="text-slate-600 dark:text-slate-400 tabular-nums"
             />
-            <span className="text-xs text-gray-500 font-normal">HOURS</span>
+            <span className="text-xs text-slate-500 font-normal">HOURS</span>
           </motion.div>
-          <span className="text-gray-400">:</span>
+          <span className="text-slate-400">:</span>
           <motion.div
             className="flex flex-col items-center"
             animate={{ scale: [1, 1.05, 1] }}
@@ -185,9 +185,9 @@ export default function TimeStats({ className }: TimeStatsProps) {
               value={timeData.minutesRemaining}
               className="text-green-600 dark:text-green-400 tabular-nums"
             />
-            <span className="text-xs text-gray-500 font-normal">MINS</span>
+            <span className="text-xs text-slate-500 font-normal">MINS</span>
           </motion.div>
-          <span className="text-gray-400">:</span>
+          <span className="text-slate-400">:</span>
           <motion.div
             className="flex flex-col items-center"
             animate={{ scale: [1, 1.1, 1] }}
@@ -197,7 +197,7 @@ export default function TimeStats({ className }: TimeStatsProps) {
               value={timeData.secondsRemaining}
               className="text-orange-600 dark:text-orange-400 tabular-nums"
             />
-            <span className="text-xs text-gray-500 font-normal">SECS</span>
+            <span className="text-xs text-slate-500 font-normal">SECS</span>
           </motion.div>
         </div>{" "}
       </motion.div>{" "}
@@ -237,7 +237,7 @@ export default function TimeStats({ className }: TimeStatsProps) {
               </motion.div>
               <div>
                 {" "}
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                   {stat.label}
                 </p>
                 <div
