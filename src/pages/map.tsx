@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { MapPin, Globe, Clock, Compass } from 'lucide-react'
 
 export default function Map() {
