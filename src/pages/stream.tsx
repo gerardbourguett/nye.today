@@ -179,21 +179,12 @@ export default function Stream() {
     return viewers.toString();
   };
 
-  const formatPopulation = (population: number) => {
-    if (population >= 1000000) return `${(population / 1000000).toFixed(0)}M`;
-    if (population >= 1000) return `${(population / 1000).toFixed(0)}K`;
-    return population.toString();
-  };
-
   // Calculate total viewers from all celebrating and upcoming zones
   const totalViewers = timeZoneGroups
     .filter(
       (group) => group.status === "celebrating" || group.status === "upcoming"
     )
-    .reduce(
-      (acc, group) => acc + (Math.floor(Math.random() * 50000) + 10000),
-      0
-    );
+    .reduce((acc) => acc + (Math.floor(Math.random() * 50000) + 10000), 0);
 
   // Count live celebrations
   const liveCount = timeZoneGroups.filter(

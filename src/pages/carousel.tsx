@@ -45,7 +45,7 @@ const getCountryThumbnail = (countryCode: string) => {
     fr: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=225&fit=crop",
     de: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&h=225&fit=crop",
     it: "https://images.unsplash.com/photo-1515859005217-8a1f08870f59?w=400&h=225&fit=crop",
-    cl: "https://images.unsplash.com/photo-1544397881-6afe09ba7eb4?w=400&h=225&fit=crop",
+    cl: "https://images.unsplash.com/photo-1535479672101-8486af672be0?w=400&h=225&fit=crop",
   };
   return (
     thumbnails[countryCode.toLowerCase()] ||
