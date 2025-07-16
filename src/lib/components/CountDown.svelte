@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import { CURRENT_YEAR } from '../../data/constants';
+	import { CURRENT_YEAR } from '../data/constants';
 
 	const targetDate = new Date(`${CURRENT_YEAR + 1}-01-01T00:00:00`);
 

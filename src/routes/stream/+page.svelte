@@ -1,3 +1,12 @@
+<script lang="ts">
+	import { CURRENT_YEAR } from '../../lib/data/constants';
+</script>
+
+<svelte:head>
+	<title>#{CURRENT_YEAR + 1}Live | Stream</title>
+	<meta name="description" content="Stream of the world to celebrate the New Year" />
+</svelte:head>
+
 <div class="flex min-h-auto flex-col items-center justify-center space-y-8 text-center">
 	<h1 class="text-5xl font-bold text-sky-500">Site Under Construction</h1>
 	<p class="max-w-xl text-xl text-gray-700 dark:text-gray-200">

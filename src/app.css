@@ -126,3 +126,11 @@ body,
 	height: 100%;
 	min-height: 100vh;
 }
+
+.stream-list button.selected,
+.stream-list .selected {
+  background: gold !important;
+  color: #222 !important;
+  font-weight: bold;
+  border: 2px solid #222;
+}

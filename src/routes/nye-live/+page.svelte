@@ -1,31 +1,98 @@
-<div class="flex min-h-auto flex-col items-center justify-center space-y-8 text-center">
-	<h1 class="text-5xl font-bold text-sky-500">Site Under Construction</h1>
-	<p class="max-w-xl text-xl text-gray-700 dark:text-gray-200">
-		Soon you will be able to watch <span class="font-semibold text-cyan-500">live streams</span>
-		from <span class="font-semibold text-cyan-500">different locations</span> around the world as
-		they celebrate
-		<span class="font-semibold text-cyan-500">New Year's Eve</span> at midnight in their time zones.
-	</p>
-	<div class="flex items-center justify-center">
-		<svg
-			class="h-16 w-16 animate-bounce text-sky-400"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			viewBox="0 0 48 48"
+<script lang="ts">
+	import { streams } from '../../lib/data/streams';
+	import StreamPlayer from '../../lib/components/StreamPlayer.svelte';
+	import { Button } from '../../lib/components/ui/button';
+	import { onMount, onDestroy } from 'svelte';
+
+	let selected = streams[0];
+
+	// Countdown a la medianoche local del stream
+	let countdown = '';
+
+	function updateCountdown() {
+		if (!selected.timezone) {
+			countdown = '';
+			return;
+		}
+		const now = new Date();
+		// Hora local en la zona horaria del stream
+		const tzNow = new Date(now.toLocaleString('en-US', { timeZone: selected.timezone }));
+		const nextMidnight = new Date(tzNow);
+		nextMidnight.setHours(24, 0, 0, 0);
+		const diff = nextMidnight.getTime() - tzNow.getTime();
+		if (diff > 0) {
+			const hours = Math.floor(diff / 3600000);
+			const minutes = Math.floor((diff % 3600000) / 60000);
+			const seconds = Math.floor((diff % 60000) / 1000);
+			countdown = `${hours}h ${minutes}m ${seconds}s`;
+		} else {
+			countdown = '¡Feliz Año Nuevo!';
+		}
+	}
+
+	let interval: ReturnType<typeof setInterval>;
+	onMount(() => {
+		updateCountdown();
+		interval = setInterval(updateCountdown, 1000);
+	});
+	onDestroy(() => clearInterval(interval));
+
+	// Actualiza el countdown al cambiar de stream
+	$: selected, updateCountdown();
+</script>
+
+<h1 class="mb-4 text-2xl font-bold">New Year Live</h1>
+
+<div class="stream-list mb-6">
+	{#each streams as stream}
+		<Button
+			class={`w-full ${selected.id === stream.id ? 'selected' : ''}`}
+			onclick={() => (selected = stream)}
+			aria-label={stream.name}
 		>
-			<circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="3" />
-			<path
-				d="M24 12v12l8 4"
-				stroke="currentColor"
-				stroke-width="3"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			/>
-		</svg>
-	</div>
-	<p class="text-base text-gray-500 dark:text-gray-400">
-		Come back soon to watch live celebrations from around the world as the New Year arrives in each
-		time zone!
-	</p>
+			{stream.name} ({stream.city})
+		</Button>
+	{/each}
 </div>
+
+{#if selected.timezone}
+	<div class="countdown mb-4">
+		<span>
+			Countdown to midnight in <b>{selected.city}</b>:
+			<span class="mono">{countdown}</span>
+		</span>
+	</div>
+{/if}
+
+<StreamPlayer stream={selected} />
+
+<style>
+	.stream-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+	.stream-list button.selected,
+	.stream-list .selected {
+		background: gold !important;
+		color: #222 !important;
+		font-weight: bold;
+		border: 2px solid #222;
+	}
+	.countdown {
+		font-size: 1.2rem;
+		color: #fff;
+		background: #18181b;
+		border-radius: 0.5rem;
+		padding: 0.5rem 1rem;
+		display: inline-block;
+		margin-bottom: 1rem;
+	}
+	.countdown .mono {
+		font-family: 'Fira Mono', 'Consolas', monospace;
+		font-weight: bold;
+		color: #ffd700;
+		margin-left: 0.5rem;
+	}
+</style>

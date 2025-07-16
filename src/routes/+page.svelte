@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CURRENT_YEAR } from '../data/constants';
+	import { CURRENT_YEAR } from '../lib/data/constants';
 	import TimeProgress from '$lib/components/TimeProgress.svelte';
 	import { onMount } from 'svelte';
 	import CountDown from '$lib/components/CountDown.svelte';
@@ -10,6 +10,11 @@
 		isMounted = true;
 	});
 </script>
+
+<svelte:head>
+	<title>#{CURRENT_YEAR + 1}Live</title>
+	<meta name="description" content="Countdown to #{CURRENT_YEAR + 1} Live" />
+</svelte:head>
 
 <div
 	class="flex w-full flex-1 flex-col items-center justify-center space-y-10 text-center sm:space-y-16"

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CURRENT_YEAR } from '../../data/constants';
+	import { CURRENT_YEAR } from '../data/constants';
 	import { onMount } from 'svelte';
 	// @ts-ignore
 	import SocialIcons from '@rodneylab/svelte-social-icons';

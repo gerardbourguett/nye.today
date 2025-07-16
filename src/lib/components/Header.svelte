@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ModeToggle from './ModeToggle.svelte';
-	import { CURRENT_YEAR } from '../../data/constants';
+	import { CURRENT_YEAR } from '../data/constants';
 </script>
 
 <header

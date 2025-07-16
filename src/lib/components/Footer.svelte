@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CURRENT_YEAR } from '../../data/constants';
+	import { CURRENT_YEAR } from '../data/constants';
 	import { Github, Coffee, Twitch, Twitter } from '@lucide/svelte';
 </script>
 
