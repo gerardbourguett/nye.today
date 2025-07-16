@@ -140,34 +140,36 @@
 				</div>
 
 				<!-- Cards Grid -->
-				<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+				<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					{#each zones as zone}
 						<Card
-							class="border-zinc-200/50 bg-white/50 backdrop-blur-sm transition-all duration-300 hover:border-sky-400/30 hover:shadow-lg hover:shadow-sky-400/10 dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:hover:border-sky-400/30"
+							class="w-full max-w-xs border-zinc-200/50 bg-white/50 backdrop-blur-sm transition-all duration-300 hover:border-sky-400/30 hover:shadow-lg hover:shadow-sky-400/10 dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:hover:border-sky-400/30"
 						>
 							<CardHeader class="pb-3">
-								<div class="flex items-start justify-between">
-									<div class="flex flex-1 items-start space-x-3">
+								<div class="flex items-start justify-between gap-2">
+									<div class="flex min-w-0 flex-1 items-start space-x-2">
 										<!-- Flag -->
 										<div class="flex-shrink-0">
 											<img
 												src={getFlagUrl(zone.countryCode)}
 												alt="Flag of {zone.countryName}"
-												width="32"
-												height="32"
+												width="28"
+												height="28"
 												class="rounded-full shadow-sm"
 												loading="lazy"
 											/>
 										</div>
 										<!-- Country Info -->
-										<div class="min-w-0 flex-1">
+										<div class="min-w-0 flex-1 overflow-hidden">
 											<CardTitle
-												class="truncate text-lg font-semibold text-zinc-900 dark:text-white"
+												class="block truncate text-xs leading-tight font-semibold text-zinc-900 dark:text-white"
+												title={zone.countryName}
 											>
 												{zone.countryName}
 											</CardTitle>
 											<CardDescription
-												class="mt-1 truncate text-sm text-zinc-600 dark:text-zinc-400"
+												class="mt-1 block truncate text-xs leading-tight text-zinc-600 dark:text-zinc-400"
+												title={zone.zoneName}
 											>
 												{zone.zoneName}
 											</CardDescription>
@@ -175,7 +177,7 @@
 									</div>
 									<!-- Time -->
 									<div class="flex-shrink-0 text-right">
-										<div class="text-2xl font-bold text-sky-400">
+										<div class="text-lg font-bold text-sky-400">
 											{minutesToNextMidnight(zone.zoneName, timestamp) === 0
 												? '<1'
 												: minutesToNextMidnight(zone.zoneName, timestamp)}'
@@ -184,18 +186,20 @@
 								</div>
 							</CardHeader>
 							<CardContent class="pt-0">
-								<!-- <div class="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-									{getLocalTime(zone.zoneName, timestamp)}
-								</div> -->
 								<div
-									class="mt-3 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-500"
+									class="flex items-center justify-between gap-2 text-xs text-zinc-500 dark:text-zinc-500"
 								>
-									<span>Stream Live in {zone.countryName}</span>
+									<span class="flex-1 truncate" title={`Stream Live in ${zone.countryName}`}>
+										Stream Live in {zone.countryName}
+									</span>
 									<a
 										href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 										target="_blank"
-										class="text-sky-400">HERE</a
+										rel="noopener noreferrer"
+										class="flex-shrink-0 text-xs font-medium text-sky-400 transition-colors hover:text-sky-300"
 									>
+										HERE
+									</a>
 								</div>
 							</CardContent>
 						</Card>

@@ -637,13 +637,6 @@
         "timestamp": 1752671818
     },
     {
-        "countryCode": "CL",
-        "countryName": "Chile",
-        "zoneName": "America/Coyhaique",
-        "gmtOffset": -10800,
-        "timestamp": 1752682618
-    },
-    {
         "countryCode": "CA",
         "countryName": "Canada",
         "zoneName": "America/Creston",
