@@ -3,30 +3,34 @@
 	import { onMount } from 'svelte';
 	// @ts-ignore
 	import SocialIcons from '@rodneylab/svelte-social-icons';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
 
-	let timeLeft = { progress: 0 };
+	const progress = tweened(0, {
+		duration: 3000,
+		easing: cubicOut
+	});
 
 	onMount(() => {
-		const startOfYear = new Date(`${CURRENT_YEAR}-01-01T00:00:00`); // 1 de enero del año actual
-		const endOfYear = new Date(`${CURRENT_YEAR + 1}-01-01T00:00:00`); // 1 de enero del año siguiente
-		const now = new Date();
-
+		const startOfYear = new Date(`${CURRENT_YEAR}-01-01T00:00:00`);
+		const endOfYear = new Date(`${CURRENT_YEAR + 1}-01-01T00:00:00`);
 		const totalYearTime = endOfYear.getTime() - startOfYear.getTime();
-		const elapsedTime = now.getTime() - startOfYear.getTime();
 
-		timeLeft.progress = (elapsedTime / totalYearTime) * 100;
-
-		const interval = setInterval(() => {
+		const updateProgress = () => {
 			const now = new Date();
 			const elapsedTime = now.getTime() - startOfYear.getTime();
-			timeLeft.progress = (elapsedTime / totalYearTime) * 100;
-		}, 1000);
+			const percent = (elapsedTime / totalYearTime) * 100;
+			progress.set(percent);
+		};
+
+		updateProgress();
+		const interval = setInterval(updateProgress, 1000);
 
 		return () => clearInterval(interval);
 	});
 
 	const url = 'https://nye.today';
-	$: title = `${CURRENT_YEAR} Time Progress: ${timeLeft.progress.toFixed(6)}%`;
+	$: title = `${CURRENT_YEAR} Time Progress: ${$progress.toFixed(6)}%`;
 	const encodedUrl = encodeURIComponent(url);
 	$: encodedTitle = encodeURIComponent(title);
 </script>
@@ -41,7 +45,7 @@
 			<!-- Progress Fill -->
 			<div
 				class="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 shadow-lg transition-all duration-1000 ease-out"
-				style="width: {timeLeft.progress}%"
+				style="width: {$progress}%"
 			>
 				<!-- Animated Shine Effect -->
 				<div
@@ -57,7 +61,7 @@
 		<!-- Progress Indicator Dot -->
 		<div
 			class="absolute top-1/2 h-4 w-4 -translate-y-1/2 transform rounded-full border-2 border-white/20 bg-gradient-to-br from-cyan-700 to-blue-500 shadow-lg transition-all duration-1000 ease-out dark:from-cyan-300 dark:to-blue-500"
-			style="left: calc({timeLeft.progress}% - 8px)"
+			style="left: calc({$progress}% - 8px)"
 		>
 			<div
 				class="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-cyan-200 to-blue-400 opacity-60"
@@ -84,7 +88,7 @@
 		<!-- Progress Percentage -->
 		<div class="space-y-1">
 			<div class="text-xl font-extralight text-gray-700 tabular-nums dark:text-gray-300">
-				{timeLeft.progress.toFixed(6)}%
+				{$progress.toFixed(6)}%
 			</div>
 			<div class="flex justify-center gap-3 pt-4">
 				<a
