@@ -35,12 +35,12 @@
 	$: encodedTitle = encodeURIComponent(title);
 </script>
 
-<div class="mx-auto w-full max-w-md space-y-6">
+<div class="mx-auto w-full max-w-sm space-y-4 px-4 sm:max-w-md sm:space-y-6">
 	<!-- Progress Bar Container -->
 	<div class="relative">
 		<!-- Background Track -->
 		<div
-			class="h-2 rounded-full border border-gray-700/30 bg-gradient-to-r from-gray-900/50 to-gray-800/50 shadow-inner backdrop-blur-sm"
+			class="h-2 rounded-full border border-gray-700/30 bg-gradient-to-r from-gray-900/50 to-gray-800/50 shadow-inner backdrop-blur-sm sm:h-3"
 		>
 			<!-- Progress Fill -->
 			<div
@@ -60,8 +60,8 @@
 
 		<!-- Progress Indicator Dot -->
 		<div
-			class="absolute top-1/2 h-4 w-4 -translate-y-1/2 transform rounded-full border-2 border-white/20 bg-gradient-to-br from-cyan-700 to-blue-500 shadow-lg transition-all duration-1000 ease-out dark:from-cyan-300 dark:to-blue-500"
-			style="left: calc({$progress}% - 8px)"
+			class="absolute top-1/2 h-3 w-3 -translate-y-1/2 transform rounded-full border-2 border-white/20 bg-gradient-to-br from-cyan-700 to-blue-500 shadow-lg transition-all duration-1000 ease-out sm:h-4 sm:w-4 dark:from-cyan-300 dark:to-blue-500"
+			style="left: calc({$progress}% - 6px)"
 		>
 			<div
 				class="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-cyan-200 to-blue-400 opacity-60"
@@ -70,16 +70,22 @@
 	</div>
 
 	<!-- Progress Text -->
-	<div class="space-y-3 text-center">
+	<div class="space-y-2 text-center sm:space-y-3">
 		<!-- Year Transition Display -->
 		<div class="flex items-center justify-center gap-1">
-			<span class="text-3xl font-light text-gray-500 dark:text-gray-300">{CURRENT_YEAR}</span>
-			<span class="text-2xl font-light text-gray-500 dark:text-gray-500">→</span>
-			<span class="text-3xl font-light text-cyan-400 dark:text-cyan-400">{CURRENT_YEAR + 1}</span>
+			<span class="text-2xl font-light text-gray-500 sm:text-3xl dark:text-gray-300"
+				>{CURRENT_YEAR}</span
+			>
+			<span class="text-xl font-light text-gray-500 sm:text-2xl dark:text-gray-500">→</span>
+			<span class="text-2xl font-light text-cyan-400 sm:text-3xl dark:text-cyan-400"
+				>{CURRENT_YEAR + 1}</span
+			>
 		</div>
 
 		<!-- Progress Label -->
-		<div class="text-sm font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400">
+		<div
+			class="text-xs font-medium tracking-wider text-gray-500 uppercase sm:text-sm dark:text-gray-400"
+		>
 			Progress <span class="text-xs font-medium tracking-wide text-gray-500 uppercase"
 				>Complete</span
 			>
@@ -87,10 +93,10 @@
 
 		<!-- Progress Percentage -->
 		<div class="space-y-1">
-			<div class="text-xl font-extralight text-gray-700 tabular-nums dark:text-gray-300">
+			<div class="text-lg font-extralight text-gray-700 tabular-nums sm:text-xl dark:text-gray-300">
 				{$progress.toFixed(6)}%
 			</div>
-			<div class="flex justify-center gap-3 pt-4">
+			<div class="flex justify-center gap-2 pt-3 sm:gap-3 sm:pt-4">
 				<a
 					href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}&hashtags=nye,countdown,live`}
 					target="_blank"
@@ -148,5 +154,14 @@
 	}
 	.social-icon:hover {
 		transform: scale(1.15);
+	}
+
+	@media (max-width: 640px) {
+		.social-icon {
+			transform: scale(0.9);
+		}
+		.social-icon:hover {
+			transform: scale(1.05);
+		}
 	}
 </style>

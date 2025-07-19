@@ -41,58 +41,91 @@
 	$: selected, updateCountdown();
 </script>
 
-<h1 class="mb-4 text-2xl font-bold">New Year Live</h1>
-
-<div class="stream-list mb-6">
-	{#each streams as stream}
-		<Button
-			class={`w-full ${selected.id === stream.id ? 'selected' : ''}`}
-			onclick={() => (selected = stream)}
-			aria-label={stream.name}
+<div class="container mx-auto max-w-4xl px-4 py-6">
+	<header class="mb-8">
+		<h1
+			class="mb-4 bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-3xl font-bold text-transparent md:text-4xl"
 		>
-			{stream.name} ({stream.city})
-		</Button>
-	{/each}
+			New Year Live
+		</h1>
+		<p class="text-lg text-sky-100/80">
+			Watch New Year celebrations as they happen around the world. Each timezone celebrates at their
+			local midnight.
+		</p>
+	</header>
+
+	<!-- Stream Selection -->
+	<div class="mb-8">
+		<h2 class="mb-4 text-xl font-semibold text-sky-100">Select Location</h2>
+		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+			{#each streams as stream}
+				<button
+					class="relative rounded-lg border p-4 text-left transition-all duration-200 {selected.id ===
+					stream.id
+						? 'border-sky-400 bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-white shadow-lg'
+						: 'border-sky-900/40 bg-black/30 text-sky-100 hover:border-sky-500/60 hover:bg-sky-500/10'}"
+					onclick={() => (selected = stream)}
+					aria-label={stream.name}
+				>
+					<div class="mb-2 flex items-center justify-between">
+						<span class="font-medium">{stream.name}</span>
+						{#if selected.id === stream.id}
+							<div class="h-2 w-2 animate-pulse rounded-full bg-sky-400"></div>
+						{/if}
+					</div>
+					<div class="text-sm text-sky-200/70">{stream.city}</div>
+				</button>
+			{/each}
+		</div>
+	</div>
+
+	<!-- Countdown Section -->
+	{#if selected.timezone}
+		<div
+			class="mb-8 rounded-xl border border-sky-500/20 bg-gradient-to-r from-sky-900/30 to-cyan-900/30 p-6 backdrop-blur-sm"
+		>
+			<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+				<div>
+					<h3 class="mb-1 text-lg font-semibold text-sky-100">
+						Countdown to midnight in <span class="text-cyan-300">{selected.city}</span>
+					</h3>
+					<p class="text-sm text-sky-200/70">
+						{selected.timezone}
+					</p>
+				</div>
+				<div class="text-center sm:text-right">
+					<div
+						class="bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text font-mono text-2xl font-bold text-transparent md:text-3xl"
+					>
+						{countdown}
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	<!-- Stream Player -->
+	<div class="overflow-hidden rounded-xl border border-sky-900/40 bg-black/20">
+		<StreamPlayer stream={selected} />
+	</div>
 </div>
 
-{#if selected.timezone}
-	<div class="countdown mb-4">
-		<span>
-			Countdown to midnight in <b>{selected.city}</b>:
-			<span class="mono">{countdown}</span>
-		</span>
-	</div>
-{/if}
-
-<StreamPlayer stream={selected} />
-
 <style>
-	.stream-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		margin-bottom: 2rem;
+	/* Custom scrollbar for webkit browsers */
+	::-webkit-scrollbar {
+		width: 6px;
 	}
-	.stream-list button.selected,
-	.stream-list .selected {
-		background: gold !important;
-		color: #222 !important;
-		font-weight: bold;
-		border: 2px solid #222;
+
+	::-webkit-scrollbar-track {
+		background: rgba(0, 0, 0, 0.1);
 	}
-	.countdown {
-		font-size: 1.2rem;
-		color: #fff;
-		background: #18181b;
-		border-radius: 0.5rem;
-		padding: 0.5rem 1rem;
-		display: inline-block;
-		margin-bottom: 1rem;
+
+	::-webkit-scrollbar-thumb {
+		background: rgba(56, 189, 248, 0.3);
+		border-radius: 3px;
 	}
-	.countdown .mono {
-		font-family: 'Fira Mono', 'Consolas', monospace;
-		font-weight: bold;
-		color: #ffd700;
-		margin-left: 0.5rem;
+
+	::-webkit-scrollbar-thumb:hover {
+		background: rgba(56, 189, 248, 0.5);
 	}
 </style>

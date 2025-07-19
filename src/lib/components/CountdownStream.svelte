@@ -32,7 +32,56 @@
 </script>
 
 {#if stream.timezone}
-	<div class="countdown">
-		<span>Cuenta regresiva a la medianoche local: {countdown}</span>
+	<div class="countdown-container">
+		<div class="countdown-content">
+			<span class="countdown-text">
+				Countdown to local midnight:
+				<span class="countdown-time">{countdown}</span>
+			</span>
+		</div>
 	</div>
 {/if}
+
+<style>
+	.countdown-container {
+		margin: 1rem 0;
+	}
+
+	.countdown-content {
+		display: inline-block;
+		padding: 0.75rem 1rem;
+		background: rgba(24, 24, 27, 0.8);
+		border-radius: 0.75rem;
+		border: 1px solid rgba(56, 189, 248, 0.2);
+		backdrop-filter: blur(8px);
+	}
+
+	.countdown-text {
+		font-size: 0.875rem;
+		color: #fff;
+		font-weight: 500;
+	}
+
+	.countdown-time {
+		font-family: 'Fira Mono', 'Consolas', monospace;
+		font-weight: bold;
+		color: #38bdf8;
+		margin-left: 0.5rem;
+	}
+
+	@media (min-width: 640px) {
+		.countdown-content {
+			padding: 1rem 1.5rem;
+		}
+
+		.countdown-text {
+			font-size: 1rem;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.countdown-text {
+			font-size: 1.125rem;
+		}
+	}
+</style>
