@@ -15,6 +15,8 @@
 	}
 </script>
 
+<!-- This special Svelte tag adds a class to the <body> when the menu is open -->
+<!-- The 'overflow-hidden' class from Tailwind will prevent background scrolling -->
 <svelte:body class:overflow-hidden={isMenuOpen} />
 
 <header
@@ -97,9 +99,10 @@
 	</div>
 </header>
 
+<!-- Mobile Menu logic is now OUTSIDE the header tag -->
+
 <!-- Mobile Menu Overlay -->
 {#if isMenuOpen}
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
 		on:click={closeMenu}
