@@ -1,0 +1,58 @@
+{
+	"language": "日本語",
+	"flag": "jp",
+	"nav": {
+		"home": "ホーム",
+		"map": "マップ",
+		"live": "ライブ",
+		"stream": "ストリーム",
+		"road_to_2026": "2026年への道",
+		"menu": "メニュー"
+	},
+	"countdown": {
+		"days": "日",
+		"hours": "時間",
+		"minutes": "分",
+		"seconds": "秒"
+	},
+	"progress": {
+		"complete": "完了",
+		"year_transition": "{currentYear} → {nextYear}",
+		"progress": "進捗",
+		"time_progress": "時間の進捗: {currentYear}は{progress}%完了"
+	},
+	"map": {
+		"country_title": "{country}: {already} {year} | {not_yet}",
+		"already": "すでに{year}",
+		"not_yet": "まだ"
+	},
+	"footer": {
+		"made_with": "で作られました",
+		"by": "によって",
+		"love": "愛",
+		"connect_with_us": "私たちとつながる",
+		"repository": "リポジトリ",
+		"give_me_coffee": "コーヒーをおごってください",
+		"twitch": "Twitch",
+		"twitter": "Twitter",
+		"licensed_under": "ライセンス",
+		"built_with": "SvelteKitとTailwindCSSで構築",
+		"passionate_developer": "情熱的な開発者"
+	},
+	"countdown_component": {
+		"until_new_year": "新年まで",
+		"new_year_here": "新年が来ました！"
+	},
+	"stream": {
+		"error_message": "このストリームを表示できません。",
+		"error_subtext": "選択されたストリームの設定を確認してください。"
+	},
+	"road_to_2026": {
+		"description": "世界中で起こる新年のお祝いをリアルタイムで追跡しましょう。各タイムゾーンは現地の深夜0時にお祝いします。",
+		"stream_live_in": "ライブ配信：",
+		"here": "こちら",
+		"times_updated": "時刻はリアルタイムで更新されます。現在の現地時刻を確認するには更新してください。",
+		"minutes_short": "分",
+		"flag_alt": "の国旗"
+	}
+}

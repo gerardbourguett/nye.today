@@ -1,0 +1,58 @@
+{
+    "language": "हिंदी",
+    "flag": "hi",
+    "nav": {
+        "home": "होम",
+        "map": "मैप",
+        "live": "लाइव",
+        "stream": "स्ट्रीम",
+        "road_to_2026": "2026 तक का रास्ता",
+        "menu": "मेनू"
+    },
+    "countdown": {
+        "days": "दिन",
+        "hours": "घंटे",
+        "minutes": "मिनट",
+        "seconds": "सेकंड"
+    },
+    "progress": {
+        "complete": "पूर्ण",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "प्रगति",
+        "time_progress": "समय की प्रगति: {currentYear} {progress}% पूर्ण है"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "पहले ही {year} में",
+        "not_yet": "अभी तक नहीं"
+    },
+    "footer": {
+        "made_with": "बनाया गया",
+        "by": "द्वारा",
+        "love": "प्यार से",
+        "connect_with_us": "हमसे जुड़ें",
+        "repository": "रिपॉजिटरी",
+        "give_me_coffee": "मुझे कॉफी दें",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "लाइसेंस के तहत",
+        "built_with": "SvelteKit और TailwindCSS के साथ बनाया गया",
+        "passionate_developer": "एक जुनूनी डेवलपर"
+    },
+    "countdown_component": {
+        "until_new_year": "नए साल तक",
+        "new_year_here": "नया साल आ गया है!"
+    },
+    "stream": {
+        "error_message": "इस स्ट्रीम को प्रदर्शित नहीं कर सकते।",
+        "error_subtext": "चयनित स्ट्रीम की कॉन्फ़िगरेशन जांचें।"
+    },
+    "road_to_2026": {
+        "description": "दुनिया भर में नए साल के उत्सव को ट्रैक करें। प्रत्येक समय क्षेत्र अपनी स्थानीय मध्यरात्रि में मनाता है।",
+        "stream_live_in": "लाइव स्ट्रीम में",
+        "here": "यहाँ",
+        "times_updated": "समय वास्तविक समय में अपडेट होता है। वर्तमान स्थानीय समय देखने के लिए रीफ्रेश करें।",
+        "minutes_short": "'",
+        "flag_alt": "का झंडा"
+    }
+}

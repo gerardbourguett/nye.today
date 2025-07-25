@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { streams } from '../../lib/data/streams';
-	import StreamPlayer from '../../lib/components/StreamPlayer.svelte';
+	import StreamInfo from '../../lib/components/StreamInfo.svelte';
 	import { Button } from '../../lib/components/ui/button';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -104,9 +104,9 @@
 		</div>
 	{/if}
 
-	<!-- Stream Player -->
+	<!-- Stream Info -->
 	<div class="overflow-hidden rounded-xl border border-sky-900/40 bg-black/20">
-		<StreamPlayer stream={selected} />
+		<StreamInfo stream={selected} />
 	</div>
 </div>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { CURRENT_YEAR } from '../data/constants';
 	import { onMount } from 'svelte';
+	import { _ } from 'svelte-i18n';
 	// @ts-ignore
 	import SocialIcons from '@rodneylab/svelte-social-icons';
 	import { tweened } from 'svelte/motion';
@@ -30,7 +31,10 @@
 	});
 
 	const url = 'https://nye.today';
-	$: title = `${CURRENT_YEAR} Time Progress: ${$progress.toFixed(6)}%`;
+	$: title = $_('progress.time_progress', {
+		currentYear: CURRENT_YEAR,
+		progress: $progress.toFixed(6)
+	});
 	const encodedUrl = encodeURIComponent(url);
 	$: encodedTitle = encodeURIComponent(title);
 </script>
@@ -86,8 +90,9 @@
 		<div
 			class="text-xs font-medium tracking-wider text-gray-500 uppercase sm:text-sm dark:text-gray-400"
 		>
-			Progress <span class="text-xs font-medium tracking-wide text-gray-500 uppercase"
-				>Complete</span
+			{$_('progress.progress')}
+			<span class="text-xs font-medium tracking-wide text-gray-500 uppercase"
+				>{$_('progress.complete')}</span
 			>
 		</div>
 

@@ -1,0 +1,58 @@
+{
+    "language": "Italiano",
+    "flag": "it",
+    "nav": {
+        "home": "Home", 
+        "map": "Mappa",
+        "live": "In Diretta",
+        "stream": "Stream",
+        "road_to_2026": "Cammino al 2026",
+        "menu": "Menu"
+    },
+    "countdown": {
+        "days": "Giorni",
+        "hours": "Ore",
+        "minutes": "Minuti",
+        "seconds": "Secondi"
+    },
+    "progress": {
+        "complete": "Completato",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "Progresso",
+        "time_progress": "Progresso del Tempo: {currentYear} è {progress}% completo"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "Già nel {year}",
+        "not_yet": "Non ancora"
+    },
+    "footer": {
+        "made_with": "Fatto con",
+        "by": "da",
+        "love": "amore",
+        "connect_with_us": "Connettiti con noi",
+        "repository": "Repository",
+        "give_me_coffee": "Offrimi un caffè",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "Licenziato sotto",
+        "built_with": "Costruito con SvelteKit e TailwindCSS",
+        "passionate_developer": "uno sviluppatore appassionato"
+    },
+    "countdown_component": {
+        "until_new_year": "Fino al Capodanno",
+        "new_year_here": "Il Capodanno è arrivato!"
+    },
+    "stream": {
+        "error_message": "Impossibile visualizzare questo stream.",
+        "error_subtext": "Controlla la configurazione dello stream selezionato."
+    },
+    "road_to_2026": {
+        "description": "Segui le celebrazioni del Capodanno mentre accadono in tutto il mondo. Ogni fuso orario celebra alla sua mezzanotte locale.",
+        "stream_live_in": "Streaming dal vivo in",
+        "here": "QUI",
+        "times_updated": "Gli orari vengono aggiornati in tempo reale. Aggiorna per vedere gli orari locali attuali.",
+        "minutes_short": "'",
+        "flag_alt": "Bandiera di"
+    }
+}

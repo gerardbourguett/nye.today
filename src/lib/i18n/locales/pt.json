@@ -1,0 +1,58 @@
+{
+    "language": "Português",
+    "flag": "pt",
+    "nav": {
+        "home": "Início",
+        "map": "Mapa",
+        "live": "Em Direto",
+        "stream": "Stream",
+        "road_to_2026": "Caminho para 2026",
+        "menu": "Menu"
+    },
+    "countdown": {
+        "days": "Dias",
+        "hours": "Horas",
+        "minutes": "Minutos",
+        "seconds": "Segundos"
+    },
+    "progress": {
+        "complete": "Completo",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "Progresso",
+        "time_progress": "Progresso do Tempo: {currentYear} está {progress}% completo"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "Já em {year}",
+        "not_yet": "Ainda não"
+    },
+    "footer": {
+        "made_with": "Feito com",
+        "by": "por",
+        "love": "amor",
+        "connect_with_us": "Conecte-se conosco",
+        "repository": "Repositório",
+        "give_me_coffee": "Me pague um café",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "Licenciado sob",
+        "built_with": "Construído com SvelteKit e TailwindCSS",
+        "passionate_developer": "um desenvolvedor apaixonado"
+    },
+    "countdown_component": {
+        "until_new_year": "Até o Ano Novo",
+        "new_year_here": "O Ano Novo chegou!"
+    },
+    "stream": {
+        "error_message": "Não é possível exibir este stream.",
+        "error_subtext": "Verifique a configuração do stream selecionado."
+    },
+    "road_to_2026": {
+        "description": "Acompanhe as celebrações do Ano Novo conforme acontecem ao redor do mundo. Cada fuso horário celebra à sua meia-noite local.",
+        "stream_live_in": "Transmissão ao vivo em",
+        "here": "AQUI",
+        "times_updated": "Os horários são atualizados em tempo real. Atualize para ver os horários locais atuais.",
+        "minutes_short": "'",
+        "flag_alt": "Bandeira de"
+    }
+}

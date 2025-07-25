@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-
+	import { _ } from 'svelte-i18n';
 	// JSON de timezones en data/timezone.json
 	let zones: {
 		countryCode: string;
@@ -45,10 +45,10 @@
 		<h1
 			class="bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl"
 		>
-			World Map
+			{$_('map.world_map')}
 		</h1>
 		<p class="mt-2 text-sm text-sky-100/80 sm:text-base">
-			Countries that have already entered {new Date().getFullYear() + 1}
+			{$_('map.countries_entered', { year: new Date().getFullYear() + 1 })}
 		</p>
 	</header>
 
@@ -62,9 +62,14 @@
 					stroke="#1f2937"
 					stroke-width="0.5"
 					class="country-path cursor-pointer transition-all duration-300 hover:fill-sky-300"
-					title="{zone.countryName}: {newYearCountries[zone.countryCode]
-						? 'Already in ' + (new Date().getFullYear() + 1)
-						: 'Not yet'}"
+					{...{
+						'data-tooltip': $_('map.country_title', {
+							country: zone.countryName,
+							year: new Date().getFullYear() + 1,
+							already: $_('map.already'),
+							not_yet: $_('map.not_yet')
+						})
+					}}
 				/>
 			{/each}
 		</svg>
@@ -73,11 +78,11 @@
 	<div class="map-legend">
 		<div class="legend-item">
 			<div class="legend-color bg-sky-400"></div>
-			<span class="legend-text">Already in {new Date().getFullYear() + 1}</span>
+			<span class="legend-text">{$_('map.already', { year: new Date().getFullYear() + 1 })}</span>
 		</div>
 		<div class="legend-item">
 			<div class="legend-color bg-gray-600"></div>
-			<span class="legend-text">Still in {new Date().getFullYear()}</span>
+			<span class="legend-text">{$_('map.not_yet')}</span>
 		</div>
 	</div>
 </div>

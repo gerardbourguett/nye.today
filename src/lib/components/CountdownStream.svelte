@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { _ } from 'svelte-i18n';
 	export let stream: {
 		timezone: string;
 	};
@@ -19,7 +20,7 @@
 			const seconds = Math.floor((diff % 60000) / 1000);
 			countdown = `${hours}h ${minutes}m ${seconds}s`;
 		} else {
-			countdown = '¡Feliz Año Nuevo!';
+			countdown = $_('countdown_component.new_year_here');
 		}
 	}
 
@@ -35,7 +36,7 @@
 	<div class="countdown-container">
 		<div class="countdown-content">
 			<span class="countdown-text">
-				Countdown to local midnight:
+				{$_('countdown_component.until_new_year')}:
 				<span class="countdown-time">{countdown}</span>
 			</span>
 		</div>

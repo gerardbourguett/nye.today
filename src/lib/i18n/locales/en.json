@@ -1,0 +1,60 @@
+{
+	"language": "English",
+	"flag": "en",
+	"nav": {
+		"home": "Home",
+		"map": "Map",
+		"live": "Live",
+		"stream": "Stream",
+		"road_to_2026": "Road to 2026",
+		"menu": "Menu"
+	},
+	"countdown": {
+		"days": "Days",
+		"hours": "Hours",
+		"minutes": "Minutes",
+		"seconds": "Seconds"
+	},
+	"progress": {
+		"complete": "Complete",
+		"year_transition": "{currentYear} → {nextYear}",
+		"progress": "Progress",
+		"time_progress": "Time Progress: {currentYear} is {progress}% complete"
+	},
+	"map": {
+		"country_title": "{country}: {already} {year} | {not_yet}",
+		"already": "Already in {year}",
+		"not_yet": "Not yet",
+		"world_map": "World Map",
+		"countries_entered": "Countries that have already entered {year}"
+	},
+	"footer": {
+		"made_with": "Made with",
+		"by": "by",
+		"love": "love",
+		"connect_with_us": "Connect with us",
+		"repository": "Repository",
+		"give_me_coffee": "Give me a coffee",
+		"twitch": "Twitch",
+		"twitter": "Twitter",
+		"licensed_under": "Licensed under",
+		"built_with": "Built with SvelteKit & TailwindCSS",
+		"passionate_developer": "a passionate developer"
+	},
+	"countdown_component": {
+		"until_new_year": "Until New Year",
+		"new_year_here": "New Year is here!"
+	},
+	"stream": {
+		"error_message": "Cannot display this stream.",
+		"error_subtext": "Check the configuration of the selected stream."
+	},
+	"road_to_2026": {
+		"description": "Track the New Year celebrations as they happen around the world. Each timezone celebrates at their local midnight.",
+		"stream_live_in": "Stream Live in",
+		"here": "HERE",
+		"times_updated": "Times are updated in real-time. Refresh to see current local times.",
+		"minutes_short": "'",
+		"flag_alt": "Flag of"
+	}
+}

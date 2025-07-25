@@ -3,6 +3,8 @@
 	import { CURRENT_YEAR } from '../data/constants';
 	import { Menu, X } from '@lucide/svelte/icons';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { _ } from 'svelte-i18n';
+	import LanguageSelector from './LanguageSelector.svelte';
 
 	let isMenuOpen = false;
 
@@ -50,38 +52,40 @@
 				href="/roadto2026"
 				class="relative rounded-full px-3 py-1 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/80 hover:to-cyan-500/80 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 			>
-				Road to {CURRENT_YEAR + 1}
+				{$_('nav.road_to_2026')}
 			</a>
 			<a
 				href="/map"
 				class="relative rounded-full px-3 py-1 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/80 hover:to-cyan-500/80 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 			>
-				Map
+				{$_('nav.map')}
 			</a>
 			<a
 				href="/nye-live"
 				class="relative rounded-full px-3 py-1 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/80 hover:to-cyan-500/80 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 			>
-				NYE.live
+				{$_('nav.live')}
 			</a>
 			<a
 				href="/stream"
 				class="relative rounded-full px-3 py-1 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/80 hover:to-cyan-500/80 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 			>
-				Stream
+				{$_('nav.stream')}
 			</a>
 			<span
 				class="mx-2 hidden h-6 w-px bg-gradient-to-b from-sky-400/60 to-cyan-400/10 sm:inline-block"
 				aria-hidden="true"
 			></span>
-			<div class="ml-1">
+			<div class="flex items-center gap-1">
 				<ModeToggle />
+				<LanguageSelector />
 			</div>
 		</nav>
 
 		<!-- Mobile Navigation Toggle Button -->
-		<div class="flex items-center gap-2 md:hidden">
+		<div class="flex items-center gap-1 md:hidden">
 			<ModeToggle />
+			<LanguageSelector />
 			<Button
 				onclick={toggleMenu}
 				variant="outline"
@@ -139,28 +143,28 @@
 					on:click={closeMenu}
 					class="flex items-center rounded-lg px-4 py-3 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/20 hover:to-cyan-500/20 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 				>
-					Road to {CURRENT_YEAR + 1}
+					{$_('nav.road_to_2026')}
 				</a>
 				<a
 					href="/map"
 					on:click={closeMenu}
 					class="flex items-center rounded-lg px-4 py-3 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/20 hover:to-cyan-500/20 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 				>
-					Map
+					{$_('nav.map')}
 				</a>
 				<a
 					href="/nye-live"
 					on:click={closeMenu}
 					class="flex items-center rounded-lg px-4 py-3 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/20 hover:to-cyan-500/20 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 				>
-					NYE.live
+					{$_('nav.live')}
 				</a>
 				<a
 					href="/stream"
 					on:click={closeMenu}
 					class="flex items-center rounded-lg px-4 py-3 text-base font-medium text-sky-100 transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/20 hover:to-cyan-500/20 hover:text-white focus:ring-2 focus:ring-sky-400 focus:outline-none"
 				>
-					Stream
+					{$_('nav.stream')}
 				</a>
 			</div>
 		</nav>

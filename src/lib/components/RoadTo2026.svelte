@@ -6,6 +6,7 @@
 	import CardTitle from './ui/card/card-title.svelte';
 	import Card from './ui/card/card.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import { _ } from 'svelte-i18n';
 
 	let timestamp: number = Date.now();
 
@@ -113,11 +114,10 @@
 		<h1
 			class="bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl lg:text-4xl"
 		>
-			Road to 2026
+			{$_('nav.road_to_2026')}
 		</h1>
 		<p class="mx-auto max-w-2xl px-4 text-sm text-zinc-600 sm:text-base dark:text-zinc-400">
-			Track the New Year celebrations as they happen around the world. Each timezone celebrates at
-			their local midnight.
+			{$_('road_to_2026.description') || 'Track the New Year celebrations as they happen around the world. Each timezone celebrates at their local midnight.'}
 		</p>
 	</div>
 
@@ -160,7 +160,7 @@
 										<div class="flex-shrink-0">
 											<img
 												src={getFlagUrl(zone.countryCode)}
-												alt="Flag of {zone.countryName}"
+												alt="{$_('road_to_2026.flag_alt') || 'Flag of'} {zone.countryName}"
 												width="24"
 												height="24"
 												class="rounded-full shadow-sm sm:h-7 sm:w-7"
@@ -187,8 +187,8 @@
 									<div class="flex-shrink-0 text-right">
 										<div class="text-base font-bold text-sky-400 sm:text-lg">
 											{minutesToNextMidnight(zone.zoneName, timestamp) === 0
-												? '<1'
-												: minutesToNextMidnight(zone.zoneName, timestamp)}'
+											? '<1'
+											: minutesToNextMidnight(zone.zoneName, timestamp)}{$_('road_to_2026.minutes_short') || "'"}
 										</div>
 									</div>
 								</div>
@@ -198,15 +198,15 @@
 									class="flex items-center justify-between gap-2 text-xs text-zinc-500 dark:text-zinc-500"
 								>
 									<span class="flex-1 truncate" title={`Stream Live in ${zone.countryName}`}>
-										Stream Live in {zone.countryName}
-									</span>
+									{$_('road_to_2026.stream_live_in') || 'Stream Live in'} {zone.countryName}
+								</span>
 									<a
 										href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 										target="_blank"
 										rel="noopener noreferrer"
 										class="flex-shrink-0 text-xs font-medium text-sky-400 transition-colors hover:text-sky-300"
 									>
-										HERE
+										{$_('road_to_2026.here') || 'HERE'}
 									</a>
 								</div>
 							</CardContent>
@@ -220,7 +220,7 @@
 	<!-- Footer Info -->
 	<div class="border-t border-zinc-200/50 px-4 pt-6 text-center sm:pt-8">
 		<p class="text-xs text-zinc-600 sm:text-sm dark:text-zinc-400">
-			Times are updated in real-time. Refresh to see current local times.
+			{$_('road_to_2026.times_updated') || 'Times are updated in real-time. Refresh to see current local times.'}
 		</p>
 	</div>
 </div>

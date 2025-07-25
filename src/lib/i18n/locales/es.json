@@ -1,0 +1,60 @@
+{
+	"language": "Español",
+	"flag": "es",
+	"nav": {
+		"home": "Inicio",
+		"map": "Mapa",
+		"live": "En Vivo",
+		"stream": "Stream",
+		"road_to_2026": "Camino al 2026",
+		"menu": "Menú"
+	},
+	"countdown": {
+		"days": "Días",
+		"hours": "Horas",
+		"minutes": "Minutos",
+		"seconds": "Segundos"
+	},
+	"progress": {
+		"complete": "Completo",
+		"year_transition": "{currentYear} → {nextYear}",
+		"progress": "Progreso",
+		"time_progress": "Progreso del Tiempo: {currentYear} está {progress}% completo"
+	},
+	"map": {
+		"country_title": "{country}: {already} {year} | {not_yet}",
+		"already": "Ya en {year}",
+		"not_yet": "Aún no",
+		"world_map": "Mapa Mundial",
+		"countries_entered": "Países que ya han entrado en {year}"
+	},
+	"footer": {
+		"made_with": "Hecho con",
+		"by": "por",
+		"love": "amor",
+		"connect_with_us": "Conéctate con nosotros",
+		"repository": "Repositorio",
+		"give_me_coffee": "Cómprame un café",
+		"twitch": "Twitch",
+		"twitter": "Twitter",
+		"licensed_under": "Licenciado bajo",
+		"built_with": "Construido con SvelteKit y TailwindCSS",
+		"passionate_developer": "un desarrollador apasionado"
+	},
+	"countdown_component": {
+		"until_new_year": "Hasta Año Nuevo",
+		"new_year_here": "¡El Año Nuevo está aquí!"
+	},
+	"stream": {
+		"error_message": "No se puede mostrar este stream.",
+		"error_subtext": "Verifica la configuración del stream seleccionado."
+	},
+	"road_to_2026": {
+		"description": "Sigue las celebraciones de Año Nuevo mientras suceden alrededor del mundo. Cada zona horaria celebra a su medianoche local.",
+		"stream_live_in": "Transmisión en vivo en",
+		"here": "AQUÍ",
+		"times_updated": "Los horarios se actualizan en tiempo real. Actualiza para ver los horarios locales actuales.",
+		"minutes_short": "'",
+		"flag_alt": "Bandera de"
+	}
+}

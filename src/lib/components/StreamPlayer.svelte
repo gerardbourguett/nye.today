@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from 'svelte-i18n';
 	export let stream: {
 		id: string;
 		name: string;
@@ -51,8 +52,8 @@
 	{:else}
 		<div class="fallback">
 			<div class="fallback-content">
-				<p class="fallback-text">No se puede mostrar este stream.</p>
-				<small class="fallback-subtext">Revisa la configuración del stream seleccionado.</small>
+				<p class="fallback-text">{$_('stream.error_message')}</p>
+				<small class="fallback-subtext">{$_('stream.error_subtext')}</small>
 			</div>
 		</div>
 	{/if}

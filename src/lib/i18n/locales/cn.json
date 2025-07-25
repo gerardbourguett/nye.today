@@ -1,0 +1,58 @@
+{
+    "language": "简体中文",
+    "flag": "cn",
+    "nav": {
+        "home": "首页",
+        "map": "地图",
+        "live": "直播",
+        "stream": "流媒体",
+        "road_to_2026": "通往2026年的道路",
+        "menu": "菜单"
+    },
+    "countdown": {
+        "days": "天",
+        "hours": "小时",
+        "minutes": "分钟",
+        "seconds": "秒"
+    },
+    "progress": {
+        "complete": "完成",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "进度",
+        "time_progress": "时间进度: {currentYear}已完成{progress}%"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "已经进入 {year}",
+        "not_yet": "尚未进入"
+    },
+    "footer": {
+        "made_with": "用",
+        "by": "由",
+        "love": "爱制作",
+        "connect_with_us": "与我们联系",
+        "repository": "代码库",
+        "give_me_coffee": "请我喝咖啡",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "许可证",
+        "built_with": "使用 SvelteKit 和 TailwindCSS 构建",
+        "passionate_developer": "一位充满激情的开发者"
+    },
+    "countdown_component": {
+        "until_new_year": "直到新年",
+        "new_year_here": "新年到了！"
+    },
+    "stream": {
+        "error_message": "无法显示此流媒体。",
+        "error_subtext": "请检查所选流媒体的配置。"
+    },
+    "road_to_2026": {
+        "description": "跟踪世界各地的新年庆祝活动。每个时区都在当地午夜庆祝。",
+        "stream_live_in": "在以下地区直播",
+        "here": "这里",
+        "times_updated": "时间实时更新。刷新以查看当前本地时间。",
+        "minutes_short": "'",
+        "flag_alt": "国旗"
+    }
+}

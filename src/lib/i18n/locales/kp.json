@@ -1,0 +1,58 @@
+{
+    "language": "한국어",
+    "flag": "kr",
+    "nav": {
+        "home": "홈",
+        "map": "지도",
+        "live": "라이브",
+        "stream": "스트리밍",
+        "road_to_2026": "2026 까지의 길",
+        "menu": "메뉴"
+    },
+    "countdown": {
+        "days": "일",
+        "hours": "시간",
+        "minutes": "분",
+        "seconds": "초"
+    },
+    "progress": {
+        "complete": "완료",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "진행률",
+        "time_progress": "시간 진행률: {currentYear}은 {progress}% 완료"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "이미 {year}에 있음",
+        "not_yet": "아직 없음"
+    },
+    "footer": {
+        "made_with": "만든",
+        "by": "에 의해",
+        "love": "사랑",
+        "connect_with_us": "우리와 연결하세요",
+        "repository": "저장소",
+        "give_me_coffee": "커피 사주세요",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "라이선스 하에",
+        "built_with": "SvelteKit과 TailwindCSS로 제작",
+        "passionate_developer": "열정적인 개발자"
+    },
+    "countdown_component": {
+        "until_new_year": "새해까지",
+        "new_year_here": "새해가 왔습니다!"
+    },
+    "stream": {
+        "error_message": "이 스트림을 표시할 수 없습니다.",
+        "error_subtext": "선택한 스트림의 구성을 확인하세요."
+    },
+    "road_to_2026": {
+        "description": "전 세계에서 일어나는 새해 축하 행사를 추적하세요. 각 시간대는 현지 자정에 축하합니다.",
+        "stream_live_in": "라이브 스트리밍",
+        "here": "여기",
+        "times_updated": "시간은 실시간으로 업데이트됩니다. 현재 현지 시간을 보려면 새로고침하세요.",
+        "minutes_short": "'",
+        "flag_alt": "의 국기"
+    }
+}

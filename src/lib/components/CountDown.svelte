@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { CURRENT_YEAR } from '../data/constants';
+	import { _ } from 'svelte-i18n';
 
 	const targetDate = new Date(`${CURRENT_YEAR + 1}-01-01T00:00:00`);
 
@@ -42,7 +43,7 @@
 </script>
 
 <div class="flex flex-col items-center space-y-4 sm:space-y-6">
-	<div class="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+	<div class="grid w-full max-w-6xl grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 md:gap-6 lg:gap-8 xl:gap-10">
 		<!-- Days -->
 		<div class="flex flex-col items-center space-y-2 sm:space-y-3">
 			<div
@@ -61,7 +62,7 @@
 			<span
 				class="text-xs tracking-wider text-zinc-600 uppercase sm:text-sm md:text-base dark:text-zinc-400"
 			>
-				Days
+				{$_('countdown.days')}
 			</span>
 		</div>
 
@@ -83,7 +84,7 @@
 			<span
 				class="text-xs tracking-wider text-zinc-600 uppercase sm:text-sm md:text-base dark:text-zinc-400"
 			>
-				Hours
+				{$_('countdown.hours')}
 			</span>
 		</div>
 
@@ -105,7 +106,7 @@
 			<span
 				class="text-xs tracking-wider text-zinc-600 uppercase sm:text-sm md:text-base dark:text-zinc-400"
 			>
-				Minutes
+				{$_('countdown.minutes')}
 			</span>
 		</div>
 
@@ -127,7 +128,7 @@
 			<span
 				class="text-xs tracking-wider text-zinc-600 uppercase sm:text-sm md:text-base dark:text-zinc-400"
 			>
-				Seconds
+				{$_('countdown.seconds')}
 			</span>
 		</div>
 	</div>

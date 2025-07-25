@@ -1,0 +1,58 @@
+{
+    "language": "Nederlands",
+    "flag": "nl",
+    "nav": {
+        "home": "Home",
+        "map": "Map",
+        "live": "Live",
+        "stream": "Stream",
+        "road_to_2026": "Road to 2026",
+        "menu": "Menu"
+    },
+    "countdown": {
+        "days": "Dagen",
+        "hours": "Uren",
+        "minutes": "Minuten",
+        "seconds": "Seconden"
+    },
+    "progress": {
+        "complete": "Voltooid",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "Voortgang",
+        "time_progress": "Tijdsvoortgang: {currentYear} is {progress}% voltooid"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "Al in {year}",
+        "not_yet": "Nog niet"
+    },
+    "footer": {
+        "made_with": "Gemaakt met",
+        "by": "door",
+        "love": "liefde",
+        "connect_with_us": "Verbind met ons",
+        "repository": "Repository",
+        "give_me_coffee": "Geef me een koffie",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "Gelicentieerd onder",
+        "built_with": "Gebouwd met SvelteKit en TailwindCSS",
+        "passionate_developer": "een gepassioneerde ontwikkelaar"
+    },
+    "countdown_component": {
+        "until_new_year": "Tot Nieuwjaar",
+        "new_year_here": "Nieuwjaar is hier!"
+    },
+    "stream": {
+        "error_message": "Kan deze stream niet weergeven.",
+        "error_subtext": "Controleer de configuratie van de geselecteerde stream."
+    },
+    "road_to_2026": {
+        "description": "Volg de nieuwjaarsviering terwijl ze over de hele wereld plaatsvinden. Elke tijdzone viert op hun lokale middernacht.",
+        "stream_live_in": "Live streaming in",
+        "here": "HIER",
+        "times_updated": "Tijden worden in realtime bijgewerkt. Ververs om de huidige lokale tijden te zien.",
+        "minutes_short": "'",
+        "flag_alt": "Vlag van"
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "language": "Turkish",
+    "flag": "tr",
+    "nav": {
+        "home": "Anasayfa",
+        "map": "Harita",
+        "live": "Canlı",
+        "stream": "Akış",
+        "road_to_2026": "2026'ya Ulaşma Yolu",
+        "menu": "Menü"
+    },
+    "countdown": {
+        "days": "Gün",
+        "hours": "Saat",
+        "minutes": "Dakika",
+        "seconds": "Saniye"
+    },
+    "progress": {
+        "complete": "Tamamlandı",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "İlerleme",
+        "time_progress": "Zaman İlerlemesi: {currentYear} %{progress} tamamlandı"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "{year} içinde",
+        "not_yet": "Henüz değil"
+    },
+    "footer": {
+        "made_with": "Yapıldı",
+        "by": "tarafından",
+        "love": "aşkla",
+        "connect_with_us": "Bizimle bağlantı kurun",
+        "repository": "Depo",
+        "give_me_coffee": "Bana kahve ısmarla",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "Lisans altında",
+        "built_with": "SvelteKit ve TailwindCSS ile yapıldı",
+        "passionate_developer": "tutkulu bir geliştirici"
+    },
+    "countdown_component": {
+        "until_new_year": "Yeni Yıla Kadar",
+        "new_year_here": "Yeni Yıl geldi!"
+    },
+    "stream": {
+        "error_message": "Bu akış görüntülenemiyor.",
+        "error_subtext": "Seçilen akışın yapılandırmasını kontrol edin."
+    },
+    "road_to_2026": {
+        "description": "Dünya çapında Yeni Yıl kutlamalarını takip edin. Her saat dilimi yerel gece yarısında kutlar.",
+        "stream_live_in": "Canlı yayın",
+        "here": "BURADA",
+        "times_updated": "Zamanlar gerçek zamanlı olarak güncellenir. Mevcut yerel zamanları görmek için yenileyin.",
+        "minutes_short": "'",
+        "flag_alt": "Bayrağı"
+    }
+}

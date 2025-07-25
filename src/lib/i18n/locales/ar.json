@@ -1,0 +1,58 @@
+{
+    "language": "العربية",
+    "flag": "ar",
+    "nav": {
+        "home": "الرئيسية",
+        "map": "الخريطة",
+        "live": "الحي",
+        "stream": "المشعر",
+        "road_to_2026": "الطريق إلى 2026",
+        "menu": "القائمة"
+    },
+    "countdown": {
+        "days": "أيام",
+        "hours": "ساعات",
+        "minutes": "دقائق",
+        "seconds": "ثوان"
+    },
+    "progress": {
+        "complete": "مكتمل",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "التقدم",
+        "time_progress": "تقدم الوقت: {currentYear} مكتمل بنسبة {progress}%"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "مكتمل في {year}",
+        "not_yet": "لم يتم"
+    },
+    "footer": {
+        "made_with": "صنع بـ",
+        "by": "بواسطة",
+        "love": "الحب",
+        "connect_with_us": "تواصل معنا",
+        "repository": "المستودع",
+        "give_me_coffee": "اشتري لي قهوة",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "مرخص تحت",
+        "built_with": "مبني باستخدام SvelteKit و TailwindCSS",
+        "passionate_developer": "مطور شغوف"
+    },
+    "countdown_component": {
+        "until_new_year": "حتى السنة الجديدة",
+        "new_year_here": "السنة الجديدة هنا!"
+    },
+    "stream": {
+        "error_message": "لا يمكن عرض هذا البث.",
+        "error_subtext": "تحقق من تكوين البث المحدد."
+    },
+    "road_to_2026": {
+        "description": "تتبع احتفالات رأس السنة الجديدة حول العالم. كل منطقة زمنية تحتفل في منتصف الليل المحلي.",
+        "stream_live_in": "البث المباشر في",
+        "here": "هنا",
+        "times_updated": "يتم تحديث الأوقات في الوقت الفعلي. قم بالتحديث لرؤية الأوقات المحلية الحالية.",
+        "minutes_short": "'",
+        "flag_alt": "علم"
+    }
+}

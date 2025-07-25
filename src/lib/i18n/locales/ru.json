@@ -1,0 +1,58 @@
+{
+    "language": "Русский",
+    "flag": "ru",
+    "nav": {
+        "home": "Главная",
+        "map": "Карта",
+        "live": "В прямом эфире",
+        "stream": "Стрим",
+        "road_to_2026": "Путь к 2026 году",
+        "menu": "Меню"
+    },
+    "countdown": {
+        "days": "Дни",
+        "hours": "Часов",
+        "minutes": "Минут",
+        "seconds": "Секунд"
+    },
+    "progress": {
+        "complete": "Завершено",
+        "year_transition": "{currentYear} → {nextYear}",
+        "progress": "Прогресс",
+        "time_progress": "Прогресс времени: {currentYear} завершен на {progress}%"
+    },
+    "map": {
+        "country_title": "{country}: {already} {year} | {not_yet}",
+        "already": "Уже в {year}",
+        "not_yet": "Еще нет"
+    },
+    "footer": {
+        "made_with": "Сделано с",
+        "by": "от",
+        "love": "любовью",
+        "connect_with_us": "Свяжитесь с нами",
+        "repository": "Репозиторий",
+        "give_me_coffee": "Купите мне кофе",
+        "twitch": "Twitch",
+        "twitter": "Twitter",
+        "licensed_under": "Лицензировано под",
+        "built_with": "Создано с SvelteKit и TailwindCSS",
+        "passionate_developer": "увлеченным разработчиком"
+    },
+    "countdown_component": {
+        "until_new_year": "До Нового года",
+        "new_year_here": "Новый год наступил!"
+    },
+    "stream": {
+        "error_message": "Невозможно отобразить этот поток.",
+        "error_subtext": "Проверьте конфигурацию выбранного потока."
+    },
+    "road_to_2026": {
+        "description": "Следите за празднованием Нового года по всему миру. Каждый часовой пояс празднует в свою местную полночь.",
+        "stream_live_in": "Прямая трансляция в",
+        "here": "ЗДЕСЬ",
+        "times_updated": "Время обновляется в реальном времени. Обновите страницу, чтобы увидеть текущее местное время.",
+        "minutes_short": "'",
+        "flag_alt": "Флаг"
+    }
+}

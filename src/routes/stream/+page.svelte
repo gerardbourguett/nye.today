@@ -13,7 +13,7 @@
 	};
 
 	let showStream = false;
-	let interval: number;
+	let interval: NodeJS.Timeout;
 
 	function updateCountdown() {
 		const now = new Date().getTime();

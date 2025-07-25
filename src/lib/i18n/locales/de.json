@@ -1,0 +1,56 @@
+{
+	"nav": {
+		"home": "Startseite",
+		"map": "Karte",
+		"live": "Live",
+		"stream": "Stream",
+		"road_to_2026": "Weg zu 2026",
+		"menu": "Menü"
+	},
+	"countdown": {
+		"days": "Tage",
+		"hours": "Stunden",
+		"minutes": "Minuten",
+		"seconds": "Sekunden"
+	},
+	"progress": {
+		"complete": "Abgeschlossen",
+		"year_transition": "{currentYear} → {nextYear}",
+		"progress": "Fortschritt",
+		"time_progress": "Zeitfortschritt: {currentYear} ist {progress}% abgeschlossen"
+	},
+	"map": {
+		"country_title": "{country}: {already} {year} | {not_yet}",
+		"already": "Bereits in {year}",
+		"not_yet": "Noch nicht"
+	},
+	"footer": {
+		"made_with": "Gemacht mit",
+		"by": "von",
+		"love": "Liebe",
+		"connect_with_us": "Verbinden Sie sich mit uns",
+		"repository": "Repository",
+		"give_me_coffee": "Spendieren Sie mir einen Kaffee",
+		"twitch": "Twitch",
+		"twitter": "Twitter",
+		"licensed_under": "Lizenziert unter",
+		"built_with": "Erstellt mit SvelteKit und TailwindCSS",
+		"passionate_developer": "ein leidenschaftlicher Entwickler"
+	},
+	"countdown_component": {
+		"until_new_year": "Bis zum Neuen Jahr",
+		"new_year_here": "Das neue Jahr ist da!"
+	},
+	"stream": {
+		"error_message": "Dieser Stream kann nicht angezeigt werden.",
+		"error_subtext": "Überprüfen Sie die Konfiguration des ausgewählten Streams."
+	},
+	"road_to_2026": {
+		"description": "Verfolgen Sie die Neujahrsfeiern, während sie auf der ganzen Welt stattfinden. Jede Zeitzone feiert zu ihrer lokalen Mitternacht.",
+		"stream_live_in": "Live-Stream in",
+		"here": "HIER",
+		"times_updated": "Die Zeiten werden in Echtzeit aktualisiert. Aktualisieren Sie, um die aktuellen Ortszeiten zu sehen.",
+		"minutes_short": "'",
+		"flag_alt": "Flagge von"
+	}
+}
