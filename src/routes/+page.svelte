@@ -16,25 +16,40 @@
 	<meta name="description" content="Countdown to #{CURRENT_YEAR + 1} Live" />
 </svelte:head>
 
-<div
-	class="flex w-full flex-1 flex-col items-center justify-center space-y-10 text-center sm:space-y-16"
->
-	<div class="space-y-10 sm:space-y-12">
-		<h1 class="text-6xl font-medium tracking-tight sm:text-7xl md:text-9xl">
-			#{CURRENT_YEAR + 1}<span class="animate-pulse text-sky-500">Live</span>
-		</h1>
-
-		<div class="mx-auto w-full max-w-xl px-4 sm:max-w-2xl">
-			<TimeProgress />
+<div class="flex flex-1 flex-col items-center justify-center py-8 sm:py-12">
+	<!-- Hero Section -->
+	<div class="w-full max-w-4xl mx-auto text-center space-y-8 sm:space-y-12">
+		<!-- Main Title -->
+		<div class="space-y-4">
+			<div class="inline-flex items-center gap-2 rounded-full bg-white dark:bg-zinc-900 px-4 py-2 shadow-sm border border-zinc-200 dark:border-zinc-800">
+				<div class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></div>
+				<span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+					Live Countdown
+				</span>
+			</div>
+			
+			<h1 class="text-4xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+				<span class="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 dark:from-zinc-100 dark:via-zinc-200 dark:to-zinc-300 bg-clip-text text-transparent">
+					#{CURRENT_YEAR + 1}
+				</span>
+				<span class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent animate-pulse">
+					Live
+				</span>
+			</h1>
 		</div>
 
-		<div class="animate-fade-in space-y-12 px-4 text-center">
-			<div class="mx-auto max-w-4xl">
+		<!-- Time Progress Card -->
+		<div class="mx-auto w-full max-w-2xl">
+			<div class="rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-lg border border-zinc-200/50 dark:border-zinc-800/50">
+				<TimeProgress />
+			</div>
+		</div>
+
+		<!-- Countdown Section -->
+		<div class="w-full space-y-6">
+			<div class="mx-auto max-w-5xl">
 				<CountDown />
 			</div>
-			<!--  <div class="max-w-4xl mx-auto">
-        <AnalogWatch client:load />
-      </div> -->
 		</div>
 	</div>
 </div>

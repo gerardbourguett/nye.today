@@ -2,7 +2,7 @@
 	import { CURRENT_YEAR } from '../../lib/data/constants';
 	import { onMount, onDestroy } from 'svelte';
 
-	// Target date: December 31, 2025 at 10:00 UTC
+	// Target date: December 31, 2025 at 10:00 UTC (countdown to 2026)
 	const targetDate = new Date('2025-12-31T10:00:00Z');
 
 	let timeLeft = {
@@ -91,7 +91,7 @@
 					<div class="h-4 w-4 animate-pulse rounded-full bg-red-500"></div>
 					<h1 class="text-3xl font-bold text-sky-400">COMING SOON</h1>
 				</div>
-				<h2 class="text-2xl font-semibold text-white">New Year {CURRENT_YEAR + 1} Live Stream</h2>
+				<h2 class="text-2xl font-semibold text-white">New Year 2026 Live Stream</h2>
 				<p class="text-zinc-400">December 31, 2025 at 10:00 UTC</p>
 			</div>
 
@@ -166,7 +166,7 @@
 				<h1 class="text-xl font-bold text-sky-400">LIVE STREAM</h1>
 			</div>
 			<div class="text-sm text-zinc-400">
-				{CURRENT_YEAR + 1} New Year Celebration
+				2026 New Year Celebration
 			</div>
 		</div>
 
@@ -199,7 +199,7 @@
 				<div class="mt-4 flex items-center justify-between text-white">
 					<div>
 						<h2 class="text-lg font-semibold text-sky-400">New Year Celebration Stream</h2>
-						<p class="text-sm text-zinc-400">Join the global countdown to {CURRENT_YEAR + 1}</p>
+						<p class="text-sm text-zinc-400">Join the global countdown to 2026</p>
 					</div>
 					<a
 						href="https://www.twitch.tv/vanderfondi"

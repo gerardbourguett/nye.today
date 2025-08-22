@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add:*)",
+      "Bash(npx pwa-asset-generator:*)",
+      "Bash(copy favicon.png icon-72x72.png)",
+      "Bash(copy favicon.png icon-96x96.png)",
+      "Bash(copy favicon.png icon-128x128.png)",
+      "Bash(copy favicon.png icon-144x144.png)",
+      "Bash(copy favicon.png icon-152x152.png)",
+      "Bash(copy manifest-icon-192.maskable.png icon-192x192.png)",
+      "Bash(copy favicon.png icon-384x384.png)",
+      "Bash(copy manifest-icon-512.maskable.png icon-512x512.png)",
+      "Bash(pnpm run:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

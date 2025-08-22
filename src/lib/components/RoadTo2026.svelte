@@ -7,12 +7,83 @@
 	import Card from './ui/card/card.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import { toast } from 'svelte-sonner';
 
 	let timestamp: number = Date.now();
+	let notifiedZones = new Set<string>(); // Para evitar notificaciones duplicadas
+	let notificationPermission: NotificationPermission = 'default';
+
+	// Solicitar permisos de notificación al cargar
+	async function requestNotificationPermission() {
+		if ('Notification' in window) {
+			notificationPermission = await Notification.requestPermission();
+		}
+	}
+
+	// Función para mostrar notificación push nativa
+	function showNativeNotification(zoneName: string, countryName: string) {
+		if (notificationPermission === 'granted' && 'Notification' in window) {
+			new Notification(`🎉 ¡Feliz Año Nuevo 2026!`, {
+				body: `${countryName} acaba de pasar al nuevo año`,
+				icon: '/icon-192x192.png',
+				badge: '/icon-96x96.png',
+				tag: `midnight-${zoneName}`,
+				requireInteraction: false
+			});
+		}
+	}
+
+	// Función para detectar y notificar medianoche
+	function checkMidnightNotifications() {
+		for (const [offset, zones] of Object.entries(groupedZones)) {
+			for (const zone of zones) {
+				const seconds = secondsToNextMidnight(zone.zoneName, timestamp);
+				const zoneKey = `${zone.zoneName}-${new Date().toDateString()}`;
+				const almostMidnightKey = `${zone.zoneName}-almost-${new Date().toDateString()}`;
+				
+				// Si llegó exactamente a medianoche (0 segundos) y no hemos notificado hoy
+				if (seconds <= 0 && !notifiedZones.has(zoneKey)) {
+					notifiedZones.add(zoneKey);
+					
+					// Mostrar toast
+					toast.success(`🎉 ¡Feliz Año Nuevo 2026!`, {
+						description: `${zone.countryName} acaba de pasar al nuevo año`,
+						duration: 8000,
+						action: {
+							label: 'Ver Stream',
+							onClick: () => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')
+						}
+					});
+					
+					// Mostrar notificación push nativa
+					showNativeNotification(zone.zoneName, zone.countryName);
+				}
+				// Si están a punto de pasar al otro año (últimos 30 segundos)
+				else if (seconds <= 30 && seconds > 0 && !notifiedZones.has(almostMidnightKey)) {
+					notifiedZones.add(almostMidnightKey);
+					
+					// Mostrar toast de advertencia
+					toast.info(`⏰ ¡Están a punto de pasar al otro año!`, {
+						description: `${zone.countryName} celebrará en ${seconds} segundos`,
+						duration: 5000,
+						action: {
+							label: 'Ver Stream',
+							onClick: () => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')
+						}
+					});
+				}
+			}
+		}
+	}
 
 	onMount(() => {
+		// Solicitar permisos de notificación al cargar
+		requestNotificationPermission();
+		
 		const interval = setInterval(() => {
 			timestamp = Date.now();
+			// Verificar notificaciones de medianoche en cada actualización
+			checkMidnightNotifications();
 		}, 1000); // Actualiza cada segundo
 
 		onDestroy(() => {
@@ -87,7 +158,35 @@
 		const nextMidnight = new Date(year, month - 1, day + 1, 0, 0, 0);
 
 		const diffMs = nextMidnight.getTime() - localNow.getTime();
-		return Math.floor(diffMs / 60000);
+		return Math.ceil(diffMs / 60000); // Usar ceil para que sea más preciso
+	}
+
+	function secondsToNextMidnight(zoneName: string, now: number): number {
+		const parts = new Intl.DateTimeFormat('en-US', {
+			timeZone: zoneName,
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit',
+			hour12: false
+		}).formatToParts(new Date(now));
+
+		const getPart = (type: string) => parts.find((p) => p.type === type)?.value || '00';
+
+		const year = Number(getPart('year'));
+		const month = Number(getPart('month'));
+		const day = Number(getPart('day'));
+		const hour = Number(getPart('hour'));
+		const minute = Number(getPart('minute'));
+		const second = Number(getPart('second'));
+
+		const localNow = new Date(year, month - 1, day, hour, minute, second);
+		const nextMidnight = new Date(year, month - 1, day + 1, 0, 0, 0);
+
+		const diffMs = nextMidnight.getTime() - localNow.getTime();
+		return Math.ceil(diffMs / 1000);
 	}
 
 	// Calcula y reordena cada vez que cambia timestamp

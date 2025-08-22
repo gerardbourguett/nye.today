@@ -41,72 +41,90 @@
 	$: selected, updateCountdown();
 </script>
 
-<div class="container mx-auto max-w-4xl px-4 py-6">
-	<header class="mb-8">
-		<h1
-			class="mb-4 bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-3xl font-bold text-transparent md:text-4xl"
-		>
-			New Year Live
-		</h1>
-		<p class="text-lg text-sky-100/80">
-			Watch New Year celebrations as they happen around the world. Each timezone celebrates at their
-			local midnight.
-		</p>
-	</header>
-
-	<!-- Stream Selection -->
-	<div class="mb-8">
-		<h2 class="mb-4 text-xl font-semibold text-sky-100">Select Location</h2>
-		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-			{#each streams as stream}
-				<button
-					class="relative rounded-lg border p-4 text-left transition-all duration-200 {selected.id ===
-					stream.id
-						? 'border-sky-400 bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-white shadow-lg'
-						: 'border-sky-900/40 bg-black/30 text-sky-100 hover:border-sky-500/60 hover:bg-sky-500/10'}"
-					onclick={() => (selected = stream)}
-					aria-label={stream.name}
+<div class="min-h-screen pb-6">
+	<!-- Header Section -->
+	<div
+		class="border-b border-zinc-200/50 bg-gradient-to-b from-white to-zinc-50 dark:border-zinc-800/50 dark:from-zinc-900 dark:to-zinc-950"
+	>
+		<div class="mx-auto max-w-4xl px-4 py-8 sm:py-12">
+			<div class="space-y-4 text-center">
+				<div
+					class="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3 py-1 dark:border-red-800 dark:bg-red-950/30"
 				>
-					<div class="mb-2 flex items-center justify-between">
-						<span class="font-medium">{stream.name}</span>
-						{#if selected.id === stream.id}
-							<div class="h-2 w-2 animate-pulse rounded-full bg-sky-400"></div>
-						{/if}
-					</div>
-					<div class="text-sm text-sky-200/70">{stream.city}</div>
-				</button>
-			{/each}
+					<div class="h-2 w-2 animate-pulse rounded-full bg-red-500"></div>
+					<span class="text-sm font-medium text-red-600 dark:text-red-400">Live Streams</span>
+				</div>
+				<h1 class="text-3xl font-bold text-zinc-900 sm:text-4xl dark:text-zinc-100">
+					New Year <span
+						class="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent"
+						>Live</span
+					>
+				</h1>
+				<p class="mx-auto max-w-2xl text-zinc-600 dark:text-zinc-400">
+					Watch New Year celebrations as they happen around the world. Each timezone celebrates at
+					their local midnight.
+				</p>
+			</div>
 		</div>
 	</div>
 
-	<!-- Countdown Section -->
-	{#if selected.timezone}
-		<div
-			class="mb-8 rounded-xl border border-sky-500/20 bg-gradient-to-r from-sky-900/30 to-cyan-900/30 p-6 backdrop-blur-sm"
-		>
-			<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-				<div>
-					<h3 class="mb-1 text-lg font-semibold text-sky-100">
-						Countdown to midnight in <span class="text-cyan-300">{selected.city}</span>
-					</h3>
-					<p class="text-sm text-sky-200/70">
-						{selected.timezone}
-					</p>
-				</div>
-				<div class="text-center sm:text-right">
-					<div
-						class="bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text font-mono text-2xl font-bold text-transparent md:text-3xl"
+	<div class="mx-auto max-w-4xl space-y-8 px-4 py-6">
+		<!-- Stream Selection -->
+		<div>
+			<h2 class="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">Select Location</h2>
+			<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+				{#each streams as stream}
+					<button
+						class="relative rounded-2xl border p-4 text-left transition-all duration-200 {selected.id ===
+						stream.id
+							? 'border-sky-200 bg-sky-50 shadow-lg ring-1 ring-sky-200 dark:border-sky-800 dark:bg-sky-950/50 dark:ring-sky-800'
+							: 'border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700'}"
+						onclick={() => (selected = stream)}
+						aria-label={stream.name}
 					>
-						{countdown}
+						<div class="mb-2 flex items-center justify-between">
+							<span class="font-medium text-zinc-900 dark:text-zinc-100">{stream.name}</span>
+							{#if selected.id === stream.id}
+								<div class="h-2 w-2 animate-pulse rounded-full bg-sky-500"></div>
+							{/if}
+						</div>
+						<div class="text-sm text-zinc-600 dark:text-zinc-400">{stream.city}</div>
+					</button>
+				{/each}
+			</div>
+		</div>
+
+		<!-- Countdown Section -->
+		{#if selected.timezone}
+			<div
+				class="rounded-2xl border border-sky-200/50 bg-gradient-to-br from-sky-50 to-cyan-50 p-6 dark:border-sky-800/50 dark:from-sky-950/50 dark:to-cyan-950/50"
+			>
+				<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+					<div>
+						<h3 class="mb-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+							Countdown to midnight in <span class="text-sky-600 dark:text-sky-400"
+								>{selected.city}</span
+							>
+						</h3>
+						<p class="text-sm text-zinc-600 dark:text-zinc-400">
+							{selected.timezone}
+						</p>
+					</div>
+					<div class="text-center sm:text-right">
+						<div class="font-mono text-2xl font-bold text-sky-600 md:text-3xl dark:text-sky-400">
+							{countdown}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	{/if}
+		{/if}
 
-	<!-- Stream Info -->
-	<div class="overflow-hidden rounded-xl border border-sky-900/40 bg-black/20">
-		<StreamInfo stream={selected} />
+		<!-- Stream Info -->
+		<div
+			class="overflow-hidden rounded-2xl border border-zinc-200/50 bg-white shadow-sm dark:border-zinc-800/50 dark:bg-zinc-900"
+		>
+			<StreamInfo stream={selected} />
+		</div>
 	</div>
 </div>
 

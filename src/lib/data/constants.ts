@@ -1,1 +1,1 @@
-export const CURRENT_YEAR = new Date().getFullYear();
+export const CURRENT_YEAR = 2025; // Año actual para el countdown hacia 2026
